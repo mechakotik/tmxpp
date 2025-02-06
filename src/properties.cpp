@@ -1,12 +1,55 @@
+#include <map>
 #include <tinyxml2.h>
-#include <memory>
 #include <neotmx.hpp>
+#include <variant>
+#include <string>
 
+struct tmx::PropertyValue::Data {
+    std::variant<std::string, int, float, bool, Color, Properties> value;
+    Type type = Type::EMPTY;
+};
+
+__NEOTMX_CLASS_HEADER_IMPL__(PropertyValue)
+
+tmx::Type tmx::PropertyValue::type() const {
+    return d->type;
+}
+const std::string& tmx::PropertyValue::stringValue() const {
+    return std::get<std::string>(d->value);
+}
+int tmx::PropertyValue::intValue() const {
+    return std::get<int>(d->value);
+}
+float tmx::PropertyValue::floatValue() const {
+    return std::get<float>(d->value);
+}
+bool tmx::PropertyValue::boolValue() const {
+    return std::get<bool>(d->value);
+}
+tmx::Color tmx::PropertyValue::colorValue() const {
+    return std::get<Color>(d->value);
+}
+const std::string& tmx::PropertyValue::fileValue() const {
+    return std::get<std::string>(d->value);
+}
+int tmx::PropertyValue::objectValue() const {
+    return std::get<int>(d->value);
+}
 const tmx::Properties& tmx::PropertyValue::classValue() const {
-    return *std::get<std::shared_ptr<Properties>>(value_);
+    return std::get<Properties>(d->value);
 }
 
-void tmx::Properties::parseProperties(tinyxml2::XMLElement* root) {
+struct tmx::Properties::Data {
+    std::map<std::string, PropertyValue> properties;
+};
+
+__NEOTMX_CLASS_HEADER_IMPL__(Properties)
+
+bool tmx::Properties::hasProperty(const std::string& name) const { return d->properties.contains(name); }
+const tmx::PropertyValue& tmx::Properties::property(const std::string& name) const { return d->properties.at(name); }
+const std::map<std::string, tmx::PropertyValue>& properties() const { return d->properties; }
+
+void tmx::Properties::parse(tinyxml2::XMLElement* root) {
     if(root == nullptr) {
         return;
     }
@@ -27,23 +70,29 @@ void tmx::Properties::parseProperty(tinyxml2::XMLElement* property) {
 
     std::string name = property->Attribute("name");
     std::string type = property->Attribute("type", "string");
+    PropertyValue::Data data;
+
     if(type == "string") {
-        properties_[name].set(Type::STRING, std::string(property->Attribute("value")));
+        data = {.type = Type::STRING, .value = property->Attribute("value")};
     } else if(type == "int") {
-        properties_[name].set(Type::INT, property->IntAttribute("value"));
+        data = {.type = Type::INT, .value = property->IntAttribute("value")};
     } else if(type == "float") {
-        properties_[name].set(Type::FLOAT, property->FloatAttribute("value"));
+        data = {.type = Type::FLOAT, .value = property->FloatAttribute("value")};
     } else if(type == "bool") {
-        properties_[name].set(Type::BOOL, property->BoolAttribute("value"));
+        data = {.type = Type::BOOL, .value = property->BoolAttribute("value")};
     } else if(type == "color") {
         // TODO
     } else if(type == "file") {
-        properties_[name].set(Type::FILE, std::string(property->Attribute("value")));
+        data = {.type = Type::FILE, .value = std::string(property->Attribute("value"))};
     } else if(type == "object") {
-        properties_[name].set(Type::OBJECT, property->IntAttribute("value"));
+        data = {.type = Type::OBJECT, .value = property->IntAttribute("value")};
     } else if(type == "class") {
-        std::shared_ptr<Properties> properties = std::make_shared<Properties>();
-        properties->parseProperties(property->FirstChildElement("properties"));
-        properties_[name].set(Type::CLASS, properties);
+        Properties properties;
+        properties.parse(property->FirstChildElement("properties"));
+        data = {.type = Type::CLASS, .value = properties};
     }
+
+    PropertyValue value;
+    value.d = DPointer(data);
+    properties[name] = value;
 }

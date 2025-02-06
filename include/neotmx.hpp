@@ -6,7 +6,22 @@
 #include <memory>
 #include <string>
 #include <utility>
-#include <variant>
+
+#define __NEOTMX_CLASS_HEADER_DEF__(Type) \
+    Type(); \
+    Type(const Type& other); \
+    Type(Type&& other) noexcept; \
+    Type& operator=(const Type&); \
+    Type& operator=(Type&&) noexcept; \
+    ~Type();
+
+#define __NEOTMX_CLASS_HEADER_IMPL__(Type) \
+    tmx::Type::Type() = default; \
+    tmx::Type::Type(const tmx::Type&) = default; \
+    tmx::Type::Type(tmx::Type&&) = default; \
+    tmx::Type& tmx::Type::operator=(const tmx::Type&) = default; \
+    tmx::Type& tmx::Type::operator=(tmx::Type&&) = default; \
+    tmx::Type::~Type() = default;
 
 namespace tinyxml2 {
     class XMLElement;
@@ -16,6 +31,9 @@ namespace tmx {
     struct Point;
     struct IntPoint;
     struct Color;
+
+    template<typename T>
+    class DPointer;
 
     enum class Type : unsigned char;
 
@@ -43,53 +61,90 @@ struct tmx::Color {
     unsigned char a = 0;
 };
 
-class tmx::Exception : public std::exception {
+template<typename T>
+class tmx::DPointer {
 public:
-    explicit Exception(std::string what) : what_(std::move(what)) {}
-    [[nodiscard]] const char* what() const noexcept override { return what_.c_str(); }
+    DPointer() : ptr(std::make_unique<T>()) {}
+    explicit DPointer(const T& data) : ptr(std::make_unique<T>(data)) {}
+    explicit DPointer(T&& data) : ptr(std::make_unique<T>(std::move(data))) {}
+    DPointer(const DPointer& other) : ptr(std::make_unique<T>(*other.ptr)) {}
+    DPointer(DPointer&& other) noexcept : ptr(std::move(other.ptr)) {}
+    ~DPointer() = default;
+
+    DPointer& operator=(const DPointer& other) {
+        if(&other != this) {
+            ptr = std::make_unique<T>(*other.ptr);
+        }
+        return *this;
+    }
+
+    DPointer& operator=(DPointer&& other) noexcept {
+        if(&other != this) {
+            ptr = other.ptr;
+        }
+        return *this;
+    }
+
+    [[nodiscard]] const T* get() const noexcept { return ptr.get(); }
+    [[nodiscard]] const T* operator->() const noexcept { return get(); }
+    [[nodiscard]] const T& operator*() const noexcept { return *get(); }
+
+    T* get() noexcept { return ptr.get(); }
+    T* operator->() noexcept { return get(); }
+    T& operator*() noexcept { return *get(); }
 
 private:
-    std::string what_;
+    std::unique_ptr<T> ptr;
+};
+
+class tmx::Exception : public std::exception {
+public:
+    explicit Exception(std::string error) : error(std::move(error)) {}
+    [[nodiscard]] const char* what() const noexcept override { return error.c_str(); }
+
+private:
+    std::string error;
 };
 
 enum class tmx::Type : unsigned char { EMPTY, STRING, INT, FLOAT, BOOL, COLOR, FILE, OBJECT, CLASS };
 
 class tmx::PropertyValue {
+    friend class Properties;
+
 public:
-    [[nodiscard]] Type type() const { return type_; }
-    [[nodiscard]] const std::string& stringValue() const { return std::get<std::string>(value_); }
-    [[nodiscard]] int intValue() const { return std::get<int>(value_); }
-    [[nodiscard]] float floatValue() const { return std::get<float>(value_); }
-    [[nodiscard]] bool boolValue() const { return std::get<bool>(value_); }
-    [[nodiscard]] Color colorValue() const { return std::get<Color>(value_); }
-    [[nodiscard]] const std::string& fileValue() const { return std::get<std::string>(value_); }
-    [[nodiscard]] int objectValue() const { return std::get<int>(value_); }
+    __NEOTMX_CLASS_HEADER_DEF__(PropertyValue)
+
+    [[nodiscard]] Type type() const;
+    [[nodiscard]] const std::string& stringValue() const;
+    [[nodiscard]] int intValue() const;
+    [[nodiscard]] float floatValue() const;
+    [[nodiscard]] bool boolValue() const;
+    [[nodiscard]] Color colorValue() const;
+    [[nodiscard]] const std::string& fileValue() const;
+    [[nodiscard]] int objectValue() const;
     [[nodiscard]] const Properties& classValue() const;
 
-    template <typename T>
-    void set(Type type, const T& value) {
-        type_ = type;
-        value_ = value;
-    }
-
 private:
-    std::variant<std::string, int, float, bool, Color, std::shared_ptr<Properties>> value_;
-    Type type_ = Type::EMPTY;
+    struct Data;
+    DPointer<Data> d;
 };
 
 class tmx::Properties {
 public:
-    [[nodiscard]] bool hasProperty(const std::string& name) const { return properties_.contains(name); }
-    [[nodiscard]] const PropertyValue& property(const std::string& name) { return properties_[name]; }
-    [[nodiscard]] const std::map<std::string, PropertyValue>& properties() const { return properties_; }
+    __NEOTMX_CLASS_HEADER_DEF__(Properties)
+
+    [[nodiscard]] bool hasProperty(const std::string& name) const;
+    [[nodiscard]] const PropertyValue& property(const std::string& name) const;
+    [[nodiscard]] const std::map<std::string, PropertyValue>& properties() const;
 
 protected:
-    void parseProperties(tinyxml2::XMLElement* root);
+    void parse(tinyxml2::XMLElement* root);
 
 private:
     void parseProperty(tinyxml2::XMLElement* property);
 
-    std::map<std::string, PropertyValue> properties_;
+    struct Data;
+    DPointer<Data> d;
 };
 
 class tmx::Map : public Properties {
