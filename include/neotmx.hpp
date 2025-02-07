@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 #define __NEOTMX_CLASS_HEADER_DEF__(Type) \
     Type();                               \
@@ -176,8 +177,11 @@ public:
     [[nodiscard]] Color backgroundColor() const;
     [[nodiscard]] bool infinite() const;
 
+    [[nodiscard]] const std::vector<Tileset>& tilesets() const;
+
 private:
     void parse(tinyxml2::XMLElement* root);
+    void parseTilesets(tinyxml2::XMLElement* root);
 
     struct Data;
     DPointer<Data> d;

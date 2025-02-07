@@ -1,6 +1,7 @@
 #include <tinyxml2.h>
 #include <neotmx.hpp>
 #include <string>
+#include <vector>
 
 struct tmx::Map::Data {
     std::string version;
@@ -19,6 +20,8 @@ struct tmx::Map::Data {
     Point parallaxOrigin;
     Color backgroundColor;
     bool infinite = false;
+
+    std::vector<Tileset> tilesets;
 };
 
 __NEOTMX_CLASS_HEADER_IMPL__(Map)
@@ -39,6 +42,8 @@ tmx::Map::StaggerIndex tmx::Map::staggerIndex() const { return d->staggerIndex; 
 tmx::Point tmx::Map::parallaxOrigin() const { return d->parallaxOrigin; }
 tmx::Color tmx::Map::backgroundColor() const { return d->backgroundColor; }
 bool tmx::Map::infinite() const { return d->infinite; }
+
+const std::vector<tmx::Tileset>& tmx::Map::tilesets() const { return d->tilesets; }
 
 void tmx::Map::parseFromData(const std::string& data) {
     tinyxml2::XMLDocument doc;
@@ -137,5 +142,16 @@ void tmx::Map::parse(tinyxml2::XMLElement* root) {
 
     // TODO: background color
 
+    parseTilesets(root);
     Properties::parse(root->FirstChildElement("properties"));
+}
+
+void tmx::Map::parseTilesets(tinyxml2::XMLElement* root) {
+    tinyxml2::XMLElement* element = root->FirstChildElement("tileset");
+    while(element != nullptr) {
+        Tileset tileset;
+        tileset.parse(element);
+        d->tilesets.push_back(tileset);
+        element = element->NextSiblingElement("tileset");
+    }
 }

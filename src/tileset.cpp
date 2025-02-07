@@ -23,6 +23,8 @@ struct tmx::Tileset::Data {
     int gridHeight = 0;
 };
 
+__NEOTMX_CLASS_HEADER_IMPL__(Tileset)
+
 int tmx::Tileset::firstGID() const { return d->firstGID; }
 std::string tmx::Tileset::source() const { return d->source; }
 std::string tmx::Tileset::name() const { return d->name; }
@@ -73,14 +75,19 @@ void tmx::Tileset::parse(tinyxml2::XMLElement* root) {
         return;
     }
 
-    d->name = root->Attribute("name");
-    d->tilesetClass = root->Attribute("class", "");
-    d->tileWidth = root->IntAttribute("tilewidth");
-    d->tileHeight = root->IntAttribute("tileheight");
-    d->spacing = root->IntAttribute("spacing");
-    d->margin = root->IntAttribute("margin");
-    d->tileCount = root->IntAttribute("tilecount");
-    d->columns = root->IntAttribute("columns");
+    if(root->Attribute("name") != nullptr) {
+        d->name = root->Attribute("name");
+    }
+    if(root->Attribute("class") != nullptr) {
+        d->tilesetClass = root->Attribute("class");
+    }
+
+    root->QueryIntAttribute("tilewidth", &d->tileWidth);
+    root->QueryIntAttribute("tileheight", &d->tileHeight);
+    root->QueryIntAttribute("spacing", &d->spacing);
+    root->QueryIntAttribute("margin", &d->margin);
+    root->QueryIntAttribute("tilecount", &d->tileCount);
+    root->QueryIntAttribute("columns", &d->columns);
 
     if(root->Attribute("objectalignment")) {
         std::string value = root->Attribute("objectalignment");
@@ -150,4 +157,6 @@ void tmx::Tileset::parse(tinyxml2::XMLElement* root) {
         d->gridWidth = element->IntAttribute("width");
         d->gridHeight = element->IntAttribute("height");
     }
+
+    Properties::parse(root->FirstChildElement("properties"));
 }
