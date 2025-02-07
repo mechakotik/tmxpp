@@ -1,43 +1,25 @@
-#include <map>
 #include <tinyxml2.h>
+#include <map>
 #include <neotmx.hpp>
-#include <variant>
 #include <string>
+#include <variant>
 
 struct tmx::PropertyValue::Data {
-    std::variant<std::string, int, float, bool, Color, Properties> value;
     Type type = Type::EMPTY;
+    std::variant<std::string, int, float, bool, Color, Properties> value;
 };
 
 __NEOTMX_CLASS_HEADER_IMPL__(PropertyValue)
 
-tmx::Type tmx::PropertyValue::type() const {
-    return d->type;
-}
-const std::string& tmx::PropertyValue::stringValue() const {
-    return std::get<std::string>(d->value);
-}
-int tmx::PropertyValue::intValue() const {
-    return std::get<int>(d->value);
-}
-float tmx::PropertyValue::floatValue() const {
-    return std::get<float>(d->value);
-}
-bool tmx::PropertyValue::boolValue() const {
-    return std::get<bool>(d->value);
-}
-tmx::Color tmx::PropertyValue::colorValue() const {
-    return std::get<Color>(d->value);
-}
-const std::string& tmx::PropertyValue::fileValue() const {
-    return std::get<std::string>(d->value);
-}
-int tmx::PropertyValue::objectValue() const {
-    return std::get<int>(d->value);
-}
-const tmx::Properties& tmx::PropertyValue::classValue() const {
-    return std::get<Properties>(d->value);
-}
+tmx::Type tmx::PropertyValue::type() const { return d->type; }
+const std::string& tmx::PropertyValue::stringValue() const { return std::get<std::string>(d->value); }
+int tmx::PropertyValue::intValue() const { return std::get<int>(d->value); }
+float tmx::PropertyValue::floatValue() const { return std::get<float>(d->value); }
+bool tmx::PropertyValue::boolValue() const { return std::get<bool>(d->value); }
+tmx::Color tmx::PropertyValue::colorValue() const { return std::get<Color>(d->value); }
+const std::string& tmx::PropertyValue::fileValue() const { return std::get<std::string>(d->value); }
+int tmx::PropertyValue::objectValue() const { return std::get<int>(d->value); }
+const tmx::Properties& tmx::PropertyValue::classValue() const { return std::get<Properties>(d->value); }
 
 struct tmx::Properties::Data {
     std::map<std::string, PropertyValue> properties;
@@ -47,7 +29,7 @@ __NEOTMX_CLASS_HEADER_IMPL__(Properties)
 
 bool tmx::Properties::hasProperty(const std::string& name) const { return d->properties.contains(name); }
 const tmx::PropertyValue& tmx::Properties::property(const std::string& name) const { return d->properties.at(name); }
-const std::map<std::string, tmx::PropertyValue>& properties() const { return d->properties; }
+const std::map<std::string, tmx::PropertyValue>& tmx::Properties::properties() const { return d->properties; }
 
 void tmx::Properties::parse(tinyxml2::XMLElement* root) {
     if(root == nullptr) {
@@ -94,5 +76,5 @@ void tmx::Properties::parseProperty(tinyxml2::XMLElement* property) {
 
     PropertyValue value;
     value.d = DPointer(data);
-    properties[name] = value;
+    d->properties[name] = value;
 }

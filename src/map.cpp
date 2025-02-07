@@ -2,6 +2,44 @@
 #include <neotmx.hpp>
 #include <string>
 
+struct tmx::Map::Data {
+    std::string version;
+    std::string tiledVersion;
+    std::string mapClass;
+    Orientation orientation = Orientation::ORTHOGONAL;
+    RenderOrder renderOrder = RenderOrder::RIGHT_DOWN;
+    int compressionLevel = -1;
+    int width = 0;
+    int height = 0;
+    int tileWidth = 0;
+    int tileHeight = 0;
+    int hexSideLength = 0;
+    StaggerAxis staggerAxis = StaggerAxis::X_AXIS;
+    StaggerIndex staggerIndex = StaggerIndex::EVEN;
+    Point parallaxOrigin;
+    Color backgroundColor;
+    bool infinite = false;
+};
+
+__NEOTMX_CLASS_HEADER_IMPL__(Map)
+
+std::string tmx::Map::version() const { return d->version; }
+std::string tmx::Map::tiledVersion() const { return d->tiledVersion; }
+std::string tmx::Map::mapClass() const { return d->mapClass; }
+tmx::Map::Orientation tmx::Map::orientation() const { return d->orientation; }
+tmx::Map::RenderOrder tmx::Map::renderOrder() const { return d->renderOrder; }
+int tmx::Map::compressionLevel() const { return d->compressionLevel; }
+int tmx::Map::width() const { return d->width; }
+int tmx::Map::height() const { return d->height; }
+int tmx::Map::tileWidth() const { return d->tileWidth; }
+int tmx::Map::tileHeight() const { return d->tileHeight; }
+int tmx::Map::hexSideLength() const { return d->hexSideLength; }
+tmx::Map::StaggerAxis tmx::Map::staggerAxis() const { return d->staggerAxis; }
+tmx::Map::StaggerIndex tmx::Map::staggerIndex() const { return d->staggerIndex; }
+tmx::Point tmx::Map::parallaxOrigin() const { return d->parallaxOrigin; }
+tmx::Color tmx::Map::backgroundColor() const { return d->backgroundColor; }
+bool tmx::Map::infinite() const { return d->infinite; }
+
 void tmx::Map::parseFromData(const std::string& data) {
     tinyxml2::XMLDocument doc;
     tinyxml2::XMLError error = doc.Parse(data.c_str());
@@ -25,20 +63,20 @@ void tmx::Map::parse(tinyxml2::XMLElement* root) {
         throw Exception("Missing map root element");
     }
 
-    version_ = root->Attribute("version", "1.0");
-    tiledVersion_ = root->Attribute("tiledVersion", "1.0");
-    mapClass_ = root->Attribute("class", "");
+    d->version = root->Attribute("version", "1.0");
+    d->tiledVersion = root->Attribute("tiledVersion", "1.0");
+    d->mapClass = root->Attribute("class", "");
 
     if(root->Attribute("orientation") != nullptr) {
         std::string value = root->Attribute("orientation");
         if(value == "orthogonal") {
-            orientation_ = Orientation::ORTHOGONAL;
+            d->orientation = Orientation::ORTHOGONAL;
         } else if(value == "isometric") {
-            orientation_ = Orientation::ISOMETRIC;
+            d->orientation = Orientation::ISOMETRIC;
         } else if(value == "staggered") {
-            orientation_ = Orientation::STAGGERED;
+            d->orientation = Orientation::STAGGERED;
         } else if(value == "hexagonal") {
-            orientation_ = Orientation::HEXAGONAL;
+            d->orientation = Orientation::HEXAGONAL;
         } else {
             throw Exception("Invalid orientation " + value);
         }
@@ -47,31 +85,31 @@ void tmx::Map::parse(tinyxml2::XMLElement* root) {
     if(root->Attribute("renderorder") != nullptr) {
         std::string value = root->Attribute("renderorder");
         if(value == "right-down") {
-            renderOrder_ = RenderOrder::RIGHT_DOWN;
+            d->renderOrder = RenderOrder::RIGHT_DOWN;
         } else if(value == "right-up") {
-            renderOrder_ = RenderOrder::RIGHT_UP;
+            d->renderOrder = RenderOrder::RIGHT_UP;
         } else if(value == "left-down") {
-            renderOrder_ = RenderOrder::LEFT_DOWN;
+            d->renderOrder = RenderOrder::LEFT_DOWN;
         } else if(value == "left-up") {
-            renderOrder_ = RenderOrder::LEFT_UP;
+            d->renderOrder = RenderOrder::LEFT_UP;
         } else {
             throw Exception("Invalid render order " + value);
         }
     }
 
-    compressionLevel_ = root->IntAttribute("compressionlevel", -1);
-    width_ = root->IntAttribute("width", 0);
-    height_ = root->IntAttribute("height", 0);
-    tileWidth_ = root->IntAttribute("tileWidth", 0);
-    tileHeight_ = root->IntAttribute("tileHeight", 0);
-    hexSideLength_ = root->IntAttribute("hexSideLength", 0);
+    d->compressionLevel = root->IntAttribute("compressionlevel", -1);
+    d->width = root->IntAttribute("width", 0);
+    d->height = root->IntAttribute("height", 0);
+    d->tileWidth = root->IntAttribute("tileWidth", 0);
+    d->tileHeight = root->IntAttribute("tileHeight", 0);
+    d->hexSideLength = root->IntAttribute("hexSideLength", 0);
 
     if(root->Attribute("staggeraxis") != nullptr) {
         std::string value = root->Attribute("staggeraxis");
         if(value == "x") {
-            staggerAxis_ = StaggerAxis::X_AXIS;
+            d->staggerAxis = StaggerAxis::X_AXIS;
         } else if(value == "y") {
-            staggerAxis_ = StaggerAxis::Y_AXIS;
+            d->staggerAxis = StaggerAxis::Y_AXIS;
         } else {
             throw Exception("Invalid stagger axis " + value);
         }
@@ -80,18 +118,18 @@ void tmx::Map::parse(tinyxml2::XMLElement* root) {
     if(root->Attribute("staggerindex") != nullptr) {
         std::string value = root->Attribute("staggerindex");
         if(value == "even") {
-            staggerIndex_ = StaggerIndex::EVEN;
+            d->staggerIndex = StaggerIndex::EVEN;
         } else if(value == "odd") {
-            staggerIndex_ = StaggerIndex::ODD;
+            d->staggerIndex = StaggerIndex::ODD;
         } else {
             throw Exception("Invalid stagger index " + value);
         }
     }
 
-    parallaxOrigin_.x = root->IntAttribute("parallaxoriginx", 0);
-    parallaxOrigin_.y = root->IntAttribute("parallaxoriginx", 0);
+    d->parallaxOrigin.x = root->IntAttribute("parallaxoriginx", 0);
+    d->parallaxOrigin.y = root->IntAttribute("parallaxoriginx", 0);
 
     // TODO: background color
 
-    parseProperties(root->FirstChildElement("properties"));
+    Properties::parse(root->FirstChildElement("properties"));
 }

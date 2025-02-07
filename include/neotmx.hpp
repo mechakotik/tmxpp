@@ -8,19 +8,19 @@
 #include <utility>
 
 #define __NEOTMX_CLASS_HEADER_DEF__(Type) \
-    Type(); \
-    Type(const Type& other); \
-    Type(Type&& other) noexcept; \
-    Type& operator=(const Type&); \
-    Type& operator=(Type&&) noexcept; \
+    Type();                               \
+    Type(const Type& other);              \
+    Type(Type&& other) noexcept;          \
+    Type& operator=(const Type&);         \
+    Type& operator=(Type&&) noexcept;     \
     ~Type();
 
-#define __NEOTMX_CLASS_HEADER_IMPL__(Type) \
-    tmx::Type::Type() = default; \
-    tmx::Type::Type(const tmx::Type&) = default; \
-    tmx::Type::Type(tmx::Type&&) = default; \
-    tmx::Type& tmx::Type::operator=(const tmx::Type&) = default; \
-    tmx::Type& tmx::Type::operator=(tmx::Type&&) = default; \
+#define __NEOTMX_CLASS_HEADER_IMPL__(Type)                           \
+    tmx::Type::Type() = default;                                     \
+    tmx::Type::Type(const tmx::Type&) = default;                     \
+    tmx::Type::Type(tmx::Type&&) noexcept = default;                 \
+    tmx::Type& tmx::Type::operator=(const tmx::Type&) = default;     \
+    tmx::Type& tmx::Type::operator=(tmx::Type&&) noexcept = default; \
     tmx::Type::~Type() = default;
 
 namespace tinyxml2 {
@@ -32,7 +32,7 @@ namespace tmx {
     struct IntPoint;
     struct Color;
 
-    template<typename T>
+    template <typename T>
     class DPointer;
 
     enum class Type : unsigned char;
@@ -61,7 +61,7 @@ struct tmx::Color {
     unsigned char a = 0;
 };
 
-template<typename T>
+template <typename T>
 class tmx::DPointer {
 public:
     DPointer() : ptr(std::make_unique<T>()) {}
@@ -80,7 +80,7 @@ public:
 
     DPointer& operator=(DPointer&& other) noexcept {
         if(&other != this) {
-            ptr = other.ptr;
+            std::swap(ptr, other.ptr);
         }
         return *this;
     }
@@ -154,45 +154,33 @@ public:
     enum class StaggerAxis : unsigned char { X_AXIS, Y_AXIS };
     enum class StaggerIndex : unsigned char { EVEN, ODD };
 
+    __NEOTMX_CLASS_HEADER_DEF__(Map)
+
     void parseFromData(const std::string& data);
     void parseFromFile(const std::string& filename);
 
-    [[nodiscard]] std::string version() const { return version_; }
-    [[nodiscard]] std::string tiledVersion() const { return tiledVersion_; }
-    [[nodiscard]] std::string mapClass() const { return mapClass_; }
-    [[nodiscard]] Orientation orientation() const { return orientation_; }
-    [[nodiscard]] RenderOrder renderOrder() const { return renderOrder_; }
-    [[nodiscard]] int compressionLevel() const { return compressionLevel_; }
-    [[nodiscard]] int width() const { return width_; }
-    [[nodiscard]] int height() const { return height_; }
-    [[nodiscard]] int tileWidth() const { return tileWidth_; }
-    [[nodiscard]] int tileHeight() const { return tileHeight_; }
-    [[nodiscard]] int hexSideLength() const { return hexSideLength_; }
-    [[nodiscard]] StaggerAxis staggerAxis() const { return staggerAxis_; }
-    [[nodiscard]] StaggerIndex staggerIndex() const { return staggerIndex_; }
-    [[nodiscard]] Point parallaxOrigin() const { return parallaxOrigin_; }
-    [[nodiscard]] Color backgroundColor() const { return backgroundColor_; }
-    [[nodiscard]] bool infinite() const { return infinite_; }
+    [[nodiscard]] std::string version() const;
+    [[nodiscard]] std::string tiledVersion() const;
+    [[nodiscard]] std::string mapClass() const;
+    [[nodiscard]] Orientation orientation() const;
+    [[nodiscard]] RenderOrder renderOrder() const;
+    [[nodiscard]] int compressionLevel() const;
+    [[nodiscard]] int width() const;
+    [[nodiscard]] int height() const;
+    [[nodiscard]] int tileWidth() const;
+    [[nodiscard]] int tileHeight() const;
+    [[nodiscard]] int hexSideLength() const;
+    [[nodiscard]] StaggerAxis staggerAxis() const;
+    [[nodiscard]] StaggerIndex staggerIndex() const;
+    [[nodiscard]] Point parallaxOrigin() const;
+    [[nodiscard]] Color backgroundColor() const;
+    [[nodiscard]] bool infinite() const;
 
 private:
     void parse(tinyxml2::XMLElement* root);
 
-    std::string version_;
-    std::string tiledVersion_;
-    std::string mapClass_;
-    Orientation orientation_ = Orientation::ORTHOGONAL;
-    RenderOrder renderOrder_ = RenderOrder::RIGHT_DOWN;
-    int compressionLevel_ = -1;
-    int width_ = 0;
-    int height_ = 0;
-    int tileWidth_ = 0;
-    int tileHeight_ = 0;
-    int hexSideLength_ = 0;
-    StaggerAxis staggerAxis_ = StaggerAxis::X_AXIS;
-    StaggerIndex staggerIndex_ = StaggerIndex::EVEN;
-    Point parallaxOrigin_;
-    Color backgroundColor_;
-    bool infinite_ = false;
+    struct Data;
+    DPointer<Data> d;
 };
 
 class tmx::Tileset : public Properties {
@@ -216,49 +204,35 @@ public:
     enum class FillMode : unsigned char { STRETCH, PRESERVE_ASPECT_FIT };
     enum class GridOrientation : unsigned char { ORTHOGONAL, ISOMETRIC };
 
+    __NEOTMX_CLASS_HEADER_DEF__(Tileset)
+
     void parseFromData(const std::string& data);
     void parseFromFile(const std::string& filename);
 
-    [[nodiscard]] int firstGID() const { return firstGID_; }
-    [[nodiscard]] std::string source() const { return source_; }
-    [[nodiscard]] std::string name() const { return name_; }
-    [[nodiscard]] std::string tilesetClass() const { return tilesetClass_; }
-    [[nodiscard]] int tileWidth() const { return tileWidth_; }
-    [[nodiscard]] int tileHeight() const { return tileHeight_; }
-    [[nodiscard]] int spacing() const { return spacing_; }
-    [[nodiscard]] int margin() const { return margin_; }
-    [[nodiscard]] int tileCount() const { return tileCount_; }
-    [[nodiscard]] int columns() const { return columns_; }
-    [[nodiscard]] ObjectAlignment objectAlignment() const { return objectAlignment_; }
-    [[nodiscard]] TileRenderSize tileRenderSize() const { return tileRenderSize_; }
-    [[nodiscard]] FillMode fillMode() const { return fillMode_; }
+    [[nodiscard]] int firstGID() const;
+    [[nodiscard]] std::string source() const;
+    [[nodiscard]] std::string name() const;
+    [[nodiscard]] std::string tilesetClass() const;
+    [[nodiscard]] int tileWidth() const;
+    [[nodiscard]] int tileHeight() const;
+    [[nodiscard]] int spacing() const;
+    [[nodiscard]] int margin() const;
+    [[nodiscard]] int tileCount() const;
+    [[nodiscard]] int columns() const;
+    [[nodiscard]] ObjectAlignment objectAlignment() const;
+    [[nodiscard]] TileRenderSize tileRenderSize() const;
+    [[nodiscard]] FillMode fillMode() const;
 
-    [[nodiscard]] IntPoint tileOffset() const { return tileOffset_; }
-    [[nodiscard]] GridOrientation gridOrientation() const { return gridOrientation_; }
-    [[nodiscard]] int gridWidth() const { return gridWidth_; }
-    [[nodiscard]] int gridHeight() const { return gridHeight_; }
+    [[nodiscard]] IntPoint tileOffset() const;
+    [[nodiscard]] GridOrientation gridOrientation() const;
+    [[nodiscard]] int gridWidth() const;
+    [[nodiscard]] int gridHeight() const;
 
 private:
     void parse(tinyxml2::XMLElement* root);
 
-    int firstGID_ = 1;
-    std::string source_;
-    std::string name_;
-    std::string tilesetClass_;
-    int tileWidth_ = 0;
-    int tileHeight_ = 0;
-    int spacing_ = 0;
-    int margin_ = 0;
-    int tileCount_ = 0;
-    int columns_ = 0;
-    ObjectAlignment objectAlignment_ = ObjectAlignment::UNSPECIFIED;
-    TileRenderSize tileRenderSize_ = TileRenderSize::TILE;
-    FillMode fillMode_ = FillMode::STRETCH;
-
-    IntPoint tileOffset_;
-    GridOrientation gridOrientation_ = GridOrientation::ORTHOGONAL;
-    int gridWidth_ = 0;
-    int gridHeight_ = 0;
+    struct Data;
+    DPointer<Data> d;
 };
 
 #endif // NEOTMX_HPP

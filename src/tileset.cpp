@@ -2,6 +2,46 @@
 #include <neotmx.hpp>
 #include <string>
 
+struct tmx::Tileset::Data {
+    int firstGID = 1;
+    std::string source;
+    std::string name;
+    std::string tilesetClass;
+    int tileWidth = 0;
+    int tileHeight = 0;
+    int spacing = 0;
+    int margin = 0;
+    int tileCount = 0;
+    int columns = 0;
+    ObjectAlignment objectAlignment = ObjectAlignment::UNSPECIFIED;
+    TileRenderSize tileRenderSize = TileRenderSize::TILE;
+    FillMode fillMode = FillMode::STRETCH;
+
+    IntPoint tileOffset;
+    GridOrientation gridOrientation = GridOrientation::ORTHOGONAL;
+    int gridWidth = 0;
+    int gridHeight = 0;
+};
+
+int tmx::Tileset::firstGID() const { return d->firstGID; }
+std::string tmx::Tileset::source() const { return d->source; }
+std::string tmx::Tileset::name() const { return d->name; }
+std::string tmx::Tileset::tilesetClass() const { return d->tilesetClass; }
+int tmx::Tileset::tileWidth() const { return d->tileWidth; }
+int tmx::Tileset::tileHeight() const { return d->tileHeight; }
+int tmx::Tileset::spacing() const { return d->spacing; }
+int tmx::Tileset::margin() const { return d->margin; }
+int tmx::Tileset::tileCount() const { return d->tileCount; }
+int tmx::Tileset::columns() const { return d->columns; }
+tmx::Tileset::ObjectAlignment tmx::Tileset::objectAlignment() const { return d->objectAlignment; }
+tmx::Tileset::TileRenderSize tmx::Tileset::tileRenderSize() const { return d->tileRenderSize; }
+tmx::Tileset::FillMode tmx::Tileset::fillMode() const { return d->fillMode; }
+
+tmx::IntPoint tmx::Tileset::tileOffset() const { return d->tileOffset; }
+tmx::Tileset::GridOrientation tmx::Tileset::gridOrientation() const { return d->gridOrientation; }
+int tmx::Tileset::gridWidth() const { return d->gridWidth; }
+int tmx::Tileset::gridHeight() const { return d->gridHeight; }
+
 void tmx::Tileset::parseFromData(const std::string& data) {
     tinyxml2::XMLDocument doc;
     tinyxml2::XMLError error = doc.Parse(data.c_str());
@@ -26,44 +66,44 @@ void tmx::Tileset::parse(tinyxml2::XMLElement* root) {
     }
 
     if(root->Attribute("firstgid") != nullptr) {
-        firstGID_ = root->IntAttribute("firstgid");
+        d->firstGID = root->IntAttribute("firstgid");
     }
     if(root->Attribute("source") != nullptr) {
-        source_ = root->Attribute("source");
+        d->source = root->Attribute("source");
         return;
     }
 
-    name_ = root->Attribute("name");
-    tilesetClass_ = root->Attribute("class", "");
-    tileWidth_ = root->IntAttribute("tilewidth");
-    tileHeight_ = root->IntAttribute("tileheight");
-    spacing_ = root->IntAttribute("spacing");
-    margin_ = root->IntAttribute("margin");
-    tileCount_ = root->IntAttribute("tilecount");
-    columns_ = root->IntAttribute("columns");
+    d->name = root->Attribute("name");
+    d->tilesetClass = root->Attribute("class", "");
+    d->tileWidth = root->IntAttribute("tilewidth");
+    d->tileHeight = root->IntAttribute("tileheight");
+    d->spacing = root->IntAttribute("spacing");
+    d->margin = root->IntAttribute("margin");
+    d->tileCount = root->IntAttribute("tilecount");
+    d->columns = root->IntAttribute("columns");
 
     if(root->Attribute("objectalignment")) {
         std::string value = root->Attribute("objectalignment");
         if(value == "unspecified") {
-            objectAlignment_ = ObjectAlignment::UNSPECIFIED;
+            d->objectAlignment = ObjectAlignment::UNSPECIFIED;
         } else if(value == "topleft") {
-            objectAlignment_ = ObjectAlignment::TOP_LEFT;
+            d->objectAlignment = ObjectAlignment::TOP_LEFT;
         } else if(value == "top") {
-            objectAlignment_ = ObjectAlignment::TOP;
+            d->objectAlignment = ObjectAlignment::TOP;
         } else if(value == "topright") {
-            objectAlignment_ = ObjectAlignment::TOP_RIGHT;
+            d->objectAlignment = ObjectAlignment::TOP_RIGHT;
         } else if(value == "left") {
-            objectAlignment_ = ObjectAlignment::LEFT;
+            d->objectAlignment = ObjectAlignment::LEFT;
         } else if(value == "center") {
-            objectAlignment_ = ObjectAlignment::CENTER;
+            d->objectAlignment = ObjectAlignment::CENTER;
         } else if(value == "right") {
-            objectAlignment_ = ObjectAlignment::RIGHT;
+            d->objectAlignment = ObjectAlignment::RIGHT;
         } else if(value == "bottomleft") {
-            objectAlignment_ = ObjectAlignment::BOTTOM_LEFT;
+            d->objectAlignment = ObjectAlignment::BOTTOM_LEFT;
         } else if(value == "bottom") {
-            objectAlignment_ = ObjectAlignment::BOTTOM;
+            d->objectAlignment = ObjectAlignment::BOTTOM;
         } else if(value == "bottomright") {
-            objectAlignment_ = ObjectAlignment::BOTTOM_RIGHT;
+            d->objectAlignment = ObjectAlignment::BOTTOM_RIGHT;
         } else {
             throw Exception("Invalid object alignment " + value);
         }
@@ -72,9 +112,9 @@ void tmx::Tileset::parse(tinyxml2::XMLElement* root) {
     if(root->Attribute("tilerendersize")) {
         std::string value = root->Attribute("tilerendersize");
         if(value == "tile") {
-            tileRenderSize_ = TileRenderSize::TILE;
+            d->tileRenderSize = TileRenderSize::TILE;
         } else if(value == "grid") {
-            tileRenderSize_ = TileRenderSize::GRID;
+            d->tileRenderSize = TileRenderSize::GRID;
         } else {
             throw Exception("Invalid tile render size " + value);
         }
@@ -83,16 +123,16 @@ void tmx::Tileset::parse(tinyxml2::XMLElement* root) {
     if(root->Attribute("fillmode")) {
         std::string value = root->Attribute("fillmode");
         if(value == "stretch") {
-            fillMode_ = FillMode::STRETCH;
+            d->fillMode = FillMode::STRETCH;
         } else if(value == "preserve-aspect-fit") {
-            fillMode_ = FillMode::PRESERVE_ASPECT_FIT;
+            d->fillMode = FillMode::PRESERVE_ASPECT_FIT;
         }
     }
 
     if(root->FirstChildElement("tileoffset") != nullptr) {
         tinyxml2::XMLElement* element = root->FirstChildElement("tileoffset");
-        tileOffset_.x = element->IntAttribute("x");
-        tileOffset_.y = element->IntAttribute("y");
+        d->tileOffset.x = element->IntAttribute("x");
+        d->tileOffset.y = element->IntAttribute("y");
     }
 
     if(root->FirstChildElement("grid") != nullptr) {
@@ -100,14 +140,14 @@ void tmx::Tileset::parse(tinyxml2::XMLElement* root) {
         if(element->Attribute("orientation") != nullptr) {
             std::string value = element->Attribute("orientation");
             if(value == "orthogonal") {
-                gridOrientation_ = GridOrientation::ORTHOGONAL;
+                d->gridOrientation = GridOrientation::ORTHOGONAL;
             } else if(value == "isometric") {
-                gridOrientation_ = GridOrientation::ISOMETRIC;
+                d->gridOrientation = GridOrientation::ISOMETRIC;
             } else {
                 throw Exception("Invalid grid orientation " + value);
             }
         }
-        gridWidth_ = element->IntAttribute("width");
-        gridHeight_ = element->IntAttribute("height");
+        d->gridWidth = element->IntAttribute("width");
+        d->gridHeight = element->IntAttribute("height");
     }
 }

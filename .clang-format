@@ -1,7 +1,7 @@
 ﻿---
 BasedOnStyle: Google
 AlignAfterOpenBracket: DontAlign
-AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortFunctionsOnASingleLine: All
 AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 AllowShortLoopsOnASingleLine: false
 DerivePointerAlignment: false
