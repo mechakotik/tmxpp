@@ -6,7 +6,7 @@ struct tmx::Tileset::Data {
     int firstGID = 1;
     std::string source;
     std::string name;
-    std::string tilesetClass;
+    std::string className;
     int tileWidth = 0;
     int tileHeight = 0;
     int spacing = 0;
@@ -28,7 +28,7 @@ __NEOTMX_CLASS_HEADER_IMPL__(Tileset)
 int tmx::Tileset::firstGID() const { return d->firstGID; }
 std::string tmx::Tileset::source() const { return d->source; }
 std::string tmx::Tileset::name() const { return d->name; }
-std::string tmx::Tileset::tilesetClass() const { return d->tilesetClass; }
+std::string tmx::Tileset::className() const { return d->className; }
 int tmx::Tileset::tileWidth() const { return d->tileWidth; }
 int tmx::Tileset::tileHeight() const { return d->tileHeight; }
 int tmx::Tileset::spacing() const { return d->spacing; }
@@ -79,7 +79,7 @@ void tmx::Tileset::parse(tinyxml2::XMLElement* root) {
         d->name = root->Attribute("name");
     }
     if(root->Attribute("class") != nullptr) {
-        d->tilesetClass = root->Attribute("class");
+        d->className = root->Attribute("class");
     }
 
     root->QueryIntAttribute("tilewidth", &d->tileWidth);

@@ -6,7 +6,7 @@
 struct tmx::Map::Data {
     std::string version;
     std::string tiledVersion;
-    std::string mapClass;
+    std::string className;
     Orientation orientation = Orientation::ORTHOGONAL;
     RenderOrder renderOrder = RenderOrder::RIGHT_DOWN;
     int compressionLevel = -1;
@@ -22,13 +22,14 @@ struct tmx::Map::Data {
     bool infinite = false;
 
     std::vector<Tileset> tilesets;
+    std::vector<Layer> layers;
 };
 
 __NEOTMX_CLASS_HEADER_IMPL__(Map)
 
 std::string tmx::Map::version() const { return d->version; }
 std::string tmx::Map::tiledVersion() const { return d->tiledVersion; }
-std::string tmx::Map::mapClass() const { return d->mapClass; }
+std::string tmx::Map::className() const { return d->className; }
 tmx::Map::Orientation tmx::Map::orientation() const { return d->orientation; }
 tmx::Map::RenderOrder tmx::Map::renderOrder() const { return d->renderOrder; }
 int tmx::Map::compressionLevel() const { return d->compressionLevel; }
@@ -44,6 +45,7 @@ tmx::Color tmx::Map::backgroundColor() const { return d->backgroundColor; }
 bool tmx::Map::infinite() const { return d->infinite; }
 
 const std::vector<tmx::Tileset>& tmx::Map::tilesets() const { return d->tilesets; }
+const std::vector<tmx::Layer>& tmx::Map::layers() const { return d->layers; }
 
 void tmx::Map::parseFromData(const std::string& data) {
     tinyxml2::XMLDocument doc;
@@ -75,7 +77,7 @@ void tmx::Map::parse(tinyxml2::XMLElement* root) {
         d->tiledVersion = root->Attribute("tiledversion");
     }
     if(root->Attribute("mapClass") != nullptr) {
-        d->mapClass = root->Attribute("mapClass");
+        d->className = root->Attribute("mapClass");
     }
 
     if(root->Attribute("orientation") != nullptr) {
@@ -145,6 +147,7 @@ void tmx::Map::parse(tinyxml2::XMLElement* root) {
     }
 
     parseTilesets(root);
+    parseLayers(root);
     Properties::parse(root->FirstChildElement("properties"));
 }
 
@@ -155,5 +158,15 @@ void tmx::Map::parseTilesets(tinyxml2::XMLElement* root) {
         tileset.parse(element);
         d->tilesets.push_back(tileset);
         element = element->NextSiblingElement("tileset");
+    }
+}
+
+void tmx::Map::parseLayers(tinyxml2::XMLElement* root) {
+    tinyxml2::XMLElement* element = root->FirstChildElement("layer");
+    while(element != nullptr) {
+        Layer layer;
+        layer.parse(element);
+        d->layers.push_back(layer);
+        element = element->NextSiblingElement("layer");
     }
 }

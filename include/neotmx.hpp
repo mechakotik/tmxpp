@@ -45,6 +45,7 @@ namespace tmx {
     class Properties;
     class Map;
     class Tileset;
+    class Layer;
 } // namespace tmx
 
 struct tmx::Point {
@@ -164,7 +165,7 @@ public:
 
     [[nodiscard]] std::string version() const;
     [[nodiscard]] std::string tiledVersion() const;
-    [[nodiscard]] std::string mapClass() const;
+    [[nodiscard]] std::string className() const;
     [[nodiscard]] Orientation orientation() const;
     [[nodiscard]] RenderOrder renderOrder() const;
     [[nodiscard]] int compressionLevel() const;
@@ -180,10 +181,12 @@ public:
     [[nodiscard]] bool infinite() const;
 
     [[nodiscard]] const std::vector<Tileset>& tilesets() const;
+    [[nodiscard]] const std::vector<Layer>& layers() const;
 
 private:
     void parse(tinyxml2::XMLElement* root);
     void parseTilesets(tinyxml2::XMLElement* root);
+    void parseLayers(tinyxml2::XMLElement* root);
 
     struct Data;
     DPointer<Data> d;
@@ -218,7 +221,7 @@ public:
     [[nodiscard]] int firstGID() const;
     [[nodiscard]] std::string source() const;
     [[nodiscard]] std::string name() const;
-    [[nodiscard]] std::string tilesetClass() const;
+    [[nodiscard]] std::string className() const;
     [[nodiscard]] int tileWidth() const;
     [[nodiscard]] int tileHeight() const;
     [[nodiscard]] int spacing() const;
@@ -236,6 +239,37 @@ public:
 
 private:
     void parse(tinyxml2::XMLElement* root);
+
+    struct Data;
+    DPointer<Data> d;
+};
+
+class tmx::Layer : public Properties {
+    friend class Map;
+
+public:
+    __NEOTMX_CLASS_HEADER_DEF__(Layer)
+
+    [[nodiscard]] int id() const;
+    [[nodiscard]] const std::string& name() const;
+    [[nodiscard]] const std::string& className() const;
+    [[nodiscard]] int width() const;
+    [[nodiscard]] int height() const;
+    [[nodiscard]] float opacity() const;
+    [[nodiscard]] bool visible() const;
+    [[nodiscard]] Color tintColor() const;
+    [[nodiscard]] Point offset() const;
+    [[nodiscard]] Point parallaxFactor() const;
+
+    [[nodiscard]] const std::vector<std::vector<int>>& data() const;
+    [[nodiscard]] int at(int x, int y) const;
+    [[nodiscard]] std::string encoding() const;
+    [[nodiscard]] std::string compression() const;
+
+private:
+    void parse(tinyxml2::XMLElement* root);
+    void parseData(tinyxml2::XMLElement* root);
+    void parseCSVData(const std::string& str);
 
     struct Data;
     DPointer<Data> d;

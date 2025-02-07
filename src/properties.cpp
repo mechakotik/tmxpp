@@ -59,7 +59,10 @@ void tmx::Properties::parseProperty(tinyxml2::XMLElement* property) {
     }
 
     std::string name = property->Attribute("name");
-    std::string type = property->Attribute("type", "string");
+    std::string type = "string";
+    if(property->Attribute("type") != nullptr) {
+        type = property->Attribute("type");
+    }
     PropertyValue::Data data;
 
     if(type == "string") {

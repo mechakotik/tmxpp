@@ -1,17 +1,15 @@
 #include <gtest/gtest.h>
-#include <neotmx.hpp>
 #include <fstream>
+#include <neotmx.hpp>
 
 class BasicTest : public testing::Test {
 protected:
-    BasicTest() {
-        map.parseFromFile("assets/pf1.tmx");
-    }
+    BasicTest() { map.parseFromFile("assets/pf1.tmx"); }
 
     tmx::Map map;
 };
 
-TEST_F(BasicTest, TilemapAttributes) {
+TEST_F(BasicTest, Map) {
     // Set values
     EXPECT_EQ(map.version(), "1.10");
     EXPECT_EQ(map.tiledVersion(), "1.11.0");
@@ -24,7 +22,7 @@ TEST_F(BasicTest, TilemapAttributes) {
     EXPECT_EQ(map.infinite(), false);
 
     // Default values
-    EXPECT_EQ(map.mapClass(), "");
+    EXPECT_EQ(map.className(), "");
     EXPECT_EQ(map.compressionLevel(), -1);
     EXPECT_FLOAT_EQ(map.parallaxOrigin().x, 0);
     EXPECT_FLOAT_EQ(map.parallaxOrigin().y, 0);
@@ -40,7 +38,7 @@ TEST_F(BasicTest, TilemapAttributes) {
     EXPECT_EQ(map.property("test").type(), tmx::Type::EMPTY);
 }
 
-TEST_F(BasicTest, TilesetAttributes) {
+TEST_F(BasicTest, Tileset) {
     // Tileset exists
     ASSERT_EQ(map.tilesets().size(), 1);
     tmx::Tileset tileset = map.tilesets()[0];
@@ -60,10 +58,60 @@ TEST_F(BasicTest, TilesetAttributes) {
 
     // Default values
     EXPECT_EQ(tileset.source(), "");
-    EXPECT_EQ(tileset.tilesetClass(), "");
+    EXPECT_EQ(tileset.className(), "");
     EXPECT_EQ(tileset.spacing(), 0);
     EXPECT_EQ(tileset.margin(), 0);
     EXPECT_EQ(tileset.objectAlignment(), tmx::Tileset::ObjectAlignment::UNSPECIFIED);
     EXPECT_EQ(tileset.tileRenderSize(), tmx::Tileset::TileRenderSize::TILE);
     EXPECT_EQ(tileset.fillMode(), tmx::Tileset::FillMode::STRETCH);
+}
+
+TEST_F(BasicTest, Layers) {
+    ASSERT_EQ(map.layers().size(), 3);
+
+    tmx::Layer layer1 = map.layers()[0];
+    EXPECT_EQ(layer1.id(), 3);
+    EXPECT_EQ(layer1.name(), "layer2");
+    EXPECT_EQ(layer1.width(), 128);
+    EXPECT_EQ(layer1.height(), 28);
+    EXPECT_EQ(layer1.className(), "");
+    EXPECT_EQ(layer1.encoding(), "csv");
+    EXPECT_EQ(layer1.compression(), "");
+    EXPECT_EQ(layer1.at(0, 0), 121);
+    EXPECT_EQ(layer1.at(127, 27), 121);
+    EXPECT_EQ(layer1.properties().size(), 0);
+
+    tmx::Layer layer2 = map.layers()[1];
+    EXPECT_EQ(layer2.id(), 2);
+    EXPECT_EQ(layer2.name(), "layer1");
+    EXPECT_EQ(layer2.width(), 128);
+    EXPECT_EQ(layer2.height(), 28);
+    EXPECT_EQ(layer2.className(), "");
+    EXPECT_EQ(layer2.encoding(), "csv");
+    EXPECT_EQ(layer2.compression(), "");
+    EXPECT_EQ(layer2.at(0, 0), 16);
+    EXPECT_EQ(layer2.at(127, 0), 5);
+    EXPECT_EQ(layer2.at(0, 27), 3);
+    EXPECT_EQ(layer2.at(127, 27), 3);
+
+    EXPECT_EQ(layer2.properties().size(), 1);
+    EXPECT_EQ(layer2.hasProperty("collision"), true);
+    EXPECT_EQ(layer2.property("collision").type(), tmx::Type::BOOL);
+    EXPECT_EQ(layer2.property("collision").boolValue(), true);
+    EXPECT_EQ(layer2.hasProperty("test"), false);
+    EXPECT_EQ(layer2.property("test").type(), tmx::Type::EMPTY);
+
+    tmx::Layer layer3 = map.layers()[2];
+    EXPECT_EQ(layer3.id(), 1);
+    EXPECT_EQ(layer3.name(), "layer0");
+    EXPECT_EQ(layer3.width(), 128);
+    EXPECT_EQ(layer3.height(), 28);
+    EXPECT_EQ(layer3.className(), "");
+    EXPECT_EQ(layer3.encoding(), "csv");
+    EXPECT_EQ(layer3.compression(), "");
+    EXPECT_EQ(layer3.at(0, 0), 0);
+    EXPECT_EQ(layer3.at(127, 0), 0);
+    EXPECT_EQ(layer3.at(115, 27), 3);
+    EXPECT_EQ(layer3.at(127, 27), 0);
+    EXPECT_EQ(layer3.properties().size(), 0);
 }
