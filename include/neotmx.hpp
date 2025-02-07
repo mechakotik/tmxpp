@@ -33,6 +33,8 @@ namespace tmx {
     struct IntPoint;
     struct Color;
 
+    Color colorFromString(const std::string& str);
+
     template <typename T>
     class DPointer;
 
@@ -60,6 +62,15 @@ struct tmx::Color {
     unsigned char g = 0;
     unsigned char b = 0;
     unsigned char a = 0;
+};
+
+class tmx::Exception : public std::exception {
+public:
+    explicit Exception(std::string error) : error(std::move(error)) {}
+    [[nodiscard]] const char* what() const noexcept override { return error.c_str(); }
+
+private:
+    std::string error;
 };
 
 template <typename T>
@@ -96,15 +107,6 @@ public:
 
 private:
     std::unique_ptr<T> ptr;
-};
-
-class tmx::Exception : public std::exception {
-public:
-    explicit Exception(std::string error) : error(std::move(error)) {}
-    [[nodiscard]] const char* what() const noexcept override { return error.c_str(); }
-
-private:
-    std::string error;
 };
 
 enum class tmx::Type : unsigned char { EMPTY, STRING, INT, FLOAT, BOOL, COLOR, FILE, OBJECT, CLASS };

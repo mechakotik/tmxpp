@@ -7,6 +7,7 @@ add_library(neotmx STATIC
         src/map.cpp
         src/tileset.cpp
         src/properties.cpp
+        src/utility.cpp
         external/tinyxml2/tinyxml2.cpp
 )
 

@@ -140,7 +140,9 @@ void tmx::Map::parse(tinyxml2::XMLElement* root) {
     root->QueryFloatAttribute("parallaxoriginx", &d->parallaxOrigin.x);
     root->QueryFloatAttribute("parallaxoriginy", &d->parallaxOrigin.y);
 
-    // TODO: background color
+    if(root->Attribute("backgroundcolor") != nullptr) {
+        d->backgroundColor = colorFromString(root->Attribute("backgroundcolor"));
+    }
 
     parseTilesets(root);
     Properties::parse(root->FirstChildElement("properties"));

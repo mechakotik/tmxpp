@@ -29,6 +29,11 @@ TEST_F(BasicTest, TilemapAttributes) {
     EXPECT_FLOAT_EQ(map.parallaxOrigin().x, 0);
     EXPECT_FLOAT_EQ(map.parallaxOrigin().y, 0);
 
+    EXPECT_EQ(map.backgroundColor().r, 0);
+    EXPECT_EQ(map.backgroundColor().g, 0);
+    EXPECT_EQ(map.backgroundColor().b, 0);
+    EXPECT_EQ(map.backgroundColor().a, 0);
+
     // No properties
     EXPECT_EQ(map.properties().size(), 0);
     EXPECT_EQ(map.hasProperty("test"), false);
