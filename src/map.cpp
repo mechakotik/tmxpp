@@ -46,7 +46,7 @@ void tmx::Map::parseFromData(const std::string& data) {
     if(error != 0) {
         throw Exception("XML parse failed (error code " + std::to_string(error) + ")");
     }
-    parse(doc.RootElement()->FirstChildElement("map"));
+    parse(doc.FirstChildElement("map"));
 }
 
 void tmx::Map::parseFromFile(const std::string& filename) {
@@ -55,7 +55,7 @@ void tmx::Map::parseFromFile(const std::string& filename) {
     if(error != 0) {
         throw Exception("XML parse failed (error code " + std::to_string(error) + ")");
     }
-    parse(doc.RootElement()->FirstChildElement("map"));
+    parse(doc.FirstChildElement("map"));
 }
 
 void tmx::Map::parse(tinyxml2::XMLElement* root) {
@@ -63,9 +63,15 @@ void tmx::Map::parse(tinyxml2::XMLElement* root) {
         throw Exception("Missing map root element");
     }
 
-    d->version = root->Attribute("version", "1.0");
-    d->tiledVersion = root->Attribute("tiledVersion", "1.0");
-    d->mapClass = root->Attribute("class", "");
+    if(root->Attribute("version") != nullptr) {
+        d->version = root->Attribute("version");
+    }
+    if(root->Attribute("tiledversion") != nullptr) {
+        d->tiledVersion = root->Attribute("tiledversion");
+    }
+    if(root->Attribute("mapClass") != nullptr) {
+        d->mapClass = root->Attribute("mapClass");
+    }
 
     if(root->Attribute("orientation") != nullptr) {
         std::string value = root->Attribute("orientation");
@@ -97,12 +103,12 @@ void tmx::Map::parse(tinyxml2::XMLElement* root) {
         }
     }
 
-    d->compressionLevel = root->IntAttribute("compressionlevel", -1);
-    d->width = root->IntAttribute("width", 0);
-    d->height = root->IntAttribute("height", 0);
-    d->tileWidth = root->IntAttribute("tileWidth", 0);
-    d->tileHeight = root->IntAttribute("tileHeight", 0);
-    d->hexSideLength = root->IntAttribute("hexSideLength", 0);
+    root->QueryIntAttribute("compressionlevel", &d->compressionLevel);
+    root->QueryIntAttribute("width", &d->width);
+    root->QueryIntAttribute("height", &d->height);
+    root->QueryIntAttribute("tilewidth", &d->tileWidth);
+    root->QueryIntAttribute("tileheight", &d->tileHeight);
+    root->QueryIntAttribute("hexsidelength", &d->hexSideLength);
 
     if(root->Attribute("staggeraxis") != nullptr) {
         std::string value = root->Attribute("staggeraxis");
@@ -126,8 +132,8 @@ void tmx::Map::parse(tinyxml2::XMLElement* root) {
         }
     }
 
-    d->parallaxOrigin.x = root->IntAttribute("parallaxoriginx", 0);
-    d->parallaxOrigin.y = root->IntAttribute("parallaxoriginx", 0);
+    root->QueryFloatAttribute("parallaxoriginx", &d->parallaxOrigin.x);
+    root->QueryFloatAttribute("parallaxoriginy", &d->parallaxOrigin.y);
 
     // TODO: background color
 

@@ -14,3 +14,17 @@ target_include_directories(neotmx PRIVATE
         include
         external/tinyxml2
 )
+
+add_subdirectory(external/googletest)
+enable_testing()
+
+add_executable(neotmx_test test/basic.cpp)
+target_link_libraries(neotmx_test GTest::gtest_main neotmx)
+target_include_directories(neotmx_test PRIVATE include)
+
+add_custom_command(TARGET neotmx_test POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/test/assets $<TARGET_FILE_DIR:neotmx_test>/assets)
+
+include(GoogleTest)
+gtest_discover_tests(neotmx_test)
