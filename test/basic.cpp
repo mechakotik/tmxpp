@@ -12,6 +12,7 @@ protected:
 };
 
 TEST_F(BasicTest, TilemapAttributes) {
+    // Set values
     EXPECT_EQ(map.version(), "1.10");
     EXPECT_EQ(map.tiledVersion(), "1.11.0");
     EXPECT_EQ(map.orientation(), tmx::Map::Orientation::ORTHOGONAL);
@@ -21,4 +22,15 @@ TEST_F(BasicTest, TilemapAttributes) {
     EXPECT_EQ(map.tileWidth(), 16);
     EXPECT_EQ(map.tileHeight(), 16);
     EXPECT_EQ(map.infinite(), false);
+
+    // No properties
+    EXPECT_EQ(map.properties().size(), 0);
+    EXPECT_EQ(map.hasProperty("test"), false);
+    EXPECT_EQ(map.property("test").type(), tmx::Type::EMPTY);
+
+    // Default values
+    EXPECT_EQ(map.mapClass(), "");
+    EXPECT_EQ(map.compressionLevel(), -1);
+    EXPECT_FLOAT_EQ(map.parallaxOrigin().x, 0);
+    EXPECT_FLOAT_EQ(map.parallaxOrigin().y, 0);
 }

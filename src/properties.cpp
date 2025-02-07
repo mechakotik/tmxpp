@@ -28,7 +28,15 @@ struct tmx::Properties::Data {
 __NEOTMX_CLASS_HEADER_IMPL__(Properties)
 
 bool tmx::Properties::hasProperty(const std::string& name) const { return d->properties.contains(name); }
-const tmx::PropertyValue& tmx::Properties::property(const std::string& name) const { return d->properties.at(name); }
+
+const tmx::PropertyValue& tmx::Properties::property(const std::string& name) const {
+    if(!hasProperty(name)) {
+        static PropertyValue emptyValue = PropertyValue();
+        return emptyValue;
+    }
+    return d->properties.at(name);
+}
+
 const std::map<std::string, tmx::PropertyValue>& tmx::Properties::properties() const { return d->properties; }
 
 void tmx::Properties::parse(tinyxml2::XMLElement* root) {
