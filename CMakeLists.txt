@@ -8,6 +8,8 @@ add_library(neotmx STATIC
         src/tileset.cpp
         src/properties.cpp
         src/utility.cpp
+        src/abstract_layer.cpp
+        src/tile_layer.cpp
         src/layer.cpp
         external/tinyxml2/tinyxml2.cpp
 )

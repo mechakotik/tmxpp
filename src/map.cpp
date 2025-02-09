@@ -164,9 +164,9 @@ void tmx::Map::parseTilesets(tinyxml2::XMLElement* root) {
 void tmx::Map::parseLayers(tinyxml2::XMLElement* root) {
     tinyxml2::XMLElement* element = root->FirstChildElement("layer");
     while(element != nullptr) {
-        Layer layer;
+        TileLayer layer;
         layer.parse(element);
-        d->layers.push_back(layer);
+        d->layers.emplace_back(std::move(layer));
         element = element->NextSiblingElement("layer");
     }
 }

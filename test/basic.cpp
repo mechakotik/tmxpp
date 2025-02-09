@@ -68,8 +68,11 @@ TEST_F(BasicTest, Tileset) {
 
 TEST_F(BasicTest, Layers) {
     ASSERT_EQ(map.layers().size(), 3);
+    ASSERT_EQ(map.layers()[0].type(), tmx::Layer::Type::TILE);
+    ASSERT_EQ(map.layers()[1].type(), tmx::Layer::Type::TILE);
+    ASSERT_EQ(map.layers()[2].type(), tmx::Layer::Type::TILE);
 
-    tmx::Layer layer1 = map.layers()[0];
+    tmx::TileLayer layer1 = map.layers()[0].tileLayer();
     EXPECT_EQ(layer1.id(), 3);
     EXPECT_EQ(layer1.name(), "layer2");
     EXPECT_EQ(layer1.width(), 128);
@@ -81,7 +84,7 @@ TEST_F(BasicTest, Layers) {
     EXPECT_EQ(layer1.at(127, 27), 121);
     EXPECT_EQ(layer1.properties().size(), 0);
 
-    tmx::Layer layer2 = map.layers()[1];
+    tmx::TileLayer layer2 = map.layers()[1].tileLayer();
     EXPECT_EQ(layer2.id(), 2);
     EXPECT_EQ(layer2.name(), "layer1");
     EXPECT_EQ(layer2.width(), 128);
@@ -101,7 +104,7 @@ TEST_F(BasicTest, Layers) {
     EXPECT_EQ(layer2.hasProperty("test"), false);
     EXPECT_EQ(layer2.property("test").type(), tmx::Type::EMPTY);
 
-    tmx::Layer layer3 = map.layers()[2];
+    tmx::TileLayer layer3 = map.layers()[2].tileLayer();
     EXPECT_EQ(layer3.id(), 1);
     EXPECT_EQ(layer3.name(), "layer0");
     EXPECT_EQ(layer3.width(), 128);
