@@ -273,8 +273,13 @@ class tmx::TileLayer : public AbstractLayer {
 public:
     __NEOTMX_CLASS_HEADER_DEF__(TileLayer)
 
-    [[nodiscard]] const std::vector<std::vector<int>>& data() const;
+    [[nodiscard]] const std::vector<std::vector<unsigned int>>& data() const;
     [[nodiscard]] int at(int x, int y) const;
+    [[nodiscard]] bool flipHorizontal(int x, int y) const;
+    [[nodiscard]] bool flipVertical(int x, int y) const;
+    [[nodiscard]] bool flipDiagonal(int x, int y) const;
+    [[nodiscard]] bool rotateHex120(int x, int y) const;
+
     [[nodiscard]] int width() const;
     [[nodiscard]] int height() const;
     [[nodiscard]] std::string encoding() const;
@@ -284,6 +289,7 @@ private:
     void parse(tinyxml2::XMLElement* root);
     void parseData(tinyxml2::XMLElement* root);
     void parseCSVData(const std::string& str);
+    void checkBounds(int x, int y) const;
 
     struct Data;
     DPointer<Data> d;

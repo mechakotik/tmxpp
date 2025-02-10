@@ -23,15 +23,15 @@ const tmx::TileLayer& tmx::Layer::tileLayer() const {
 }
 
 void tmx::Layer::throwWrongType(Type wanted) const {
-    throw Exception("Attempt to extract " + typeName(wanted) + "layer while storing " + typeName(d->type));
+    throw Exception("Attempt to extract " + typeName(wanted) + " while storing " + typeName(d->type));
 }
 
 std::string tmx::Layer::typeName(Type type) {
     switch(type) {
         case Type::EMPTY:
-            return "empty";
+            return "nothing";
         case Type::TILE:
-            return "tile";
+            return "tile layer";
         default:
             return "unknown";
     }

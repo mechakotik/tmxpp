@@ -97,6 +97,19 @@ TEST_F(BasicTest, Layers) {
     EXPECT_EQ(layer2.at(0, 27), 3);
     EXPECT_EQ(layer2.at(127, 27), 3);
 
+    EXPECT_EQ(layer2.at(2, 0), 3);
+    EXPECT_EQ(layer2.flipHorizontal(2, 0), true);
+    EXPECT_EQ(layer2.flipVertical(2, 0), false);
+    EXPECT_EQ(layer2.flipDiagonal(2, 0), false);
+    EXPECT_EQ(layer2.at(5, 0), 3);
+    EXPECT_EQ(layer2.flipHorizontal(5, 0), true);
+    EXPECT_EQ(layer2.flipVertical(5, 0), true);
+    EXPECT_EQ(layer2.flipDiagonal(5, 0), false);
+    EXPECT_EQ(layer2.at(1, 2), 3);
+    EXPECT_EQ(layer2.flipHorizontal(1, 2), true);
+    EXPECT_EQ(layer2.flipVertical(1, 2), false);
+    EXPECT_EQ(layer2.flipDiagonal(1, 2), true);
+
     EXPECT_EQ(layer2.properties().size(), 1);
     EXPECT_EQ(layer2.hasProperty("collision"), true);
     EXPECT_EQ(layer2.property("collision").type(), tmx::Type::BOOL);
