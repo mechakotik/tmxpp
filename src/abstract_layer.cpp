@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-struct tmx::AbstractLayer::Data {
+struct tmx::internal::AbstractLayer::Data {
     int id = 0;
     std::string name;
     std::string className;
@@ -16,18 +16,18 @@ struct tmx::AbstractLayer::Data {
     Point parallaxFactor;
 };
 
-__NEOTMX_CLASS_HEADER_IMPL__(AbstractLayer)
+__NEOTMX_CLASS_HEADER_IMPL__(tmx::internal, AbstractLayer)
 
-int tmx::AbstractLayer::id() const { return d->id; }
-const std::string& tmx::AbstractLayer::name() const { return d->name; }
-const std::string& tmx::AbstractLayer::className() const { return d->className; }
-float tmx::AbstractLayer::opacity() const { return d->opacity; }
-bool tmx::AbstractLayer::visible() const { return d->visible; }
-tmx::Color tmx::AbstractLayer::tintColor() const { return d->tintColor; }
-tmx::Point tmx::AbstractLayer::offset() const { return d->offset; }
-tmx::Point tmx::AbstractLayer::parallaxFactor() const { return d->parallaxFactor; }
+int tmx::internal::AbstractLayer::id() const { return d->id; }
+const std::string& tmx::internal::AbstractLayer::name() const { return d->name; }
+const std::string& tmx::internal::AbstractLayer::className() const { return d->className; }
+float tmx::internal::AbstractLayer::opacity() const { return d->opacity; }
+bool tmx::internal::AbstractLayer::visible() const { return d->visible; }
+tmx::Color tmx::internal::AbstractLayer::tintColor() const { return d->tintColor; }
+tmx::Point tmx::internal::AbstractLayer::offset() const { return d->offset; }
+tmx::Point tmx::internal::AbstractLayer::parallaxFactor() const { return d->parallaxFactor; }
 
-void tmx::AbstractLayer::parse(tinyxml2::XMLElement* root) {
+void tmx::internal::AbstractLayer::parse(tinyxml2::XMLElement* root) {
     if(root == nullptr) {
         throw Exception("Missing layer root element");
     }

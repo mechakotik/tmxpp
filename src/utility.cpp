@@ -1,7 +1,7 @@
 #include <neotmx.hpp>
 
 tmx::Color tmx::colorFromString(const std::string& str) {
-    auto convert = [str] (char c) {
+    auto convert = [str](char c) {
         if('0' <= c && c <= '9') {
             return c - '0';
         }
@@ -10,9 +10,7 @@ tmx::Color tmx::colorFromString(const std::string& str) {
         }
         throw Exception("Unknown color format" + str);
     };
-    auto convert2 = [convert] (char a, char b) {
-        return (convert(a) * 10) + convert(b);
-    };
+    auto convert2 = [convert](char a, char b) { return (convert(a) * 10) + convert(b); };
 
     if((str.size() == 7 || str.size() == 9) && str[0] != '#') {
         throw Exception("Unknown color format" + str);

@@ -25,7 +25,7 @@ struct tmx::Map::Data {
     std::vector<Layer> layers;
 };
 
-__NEOTMX_CLASS_HEADER_IMPL__(Map)
+__NEOTMX_CLASS_HEADER_IMPL__(tmx, Map)
 
 std::string tmx::Map::version() const { return d->version; }
 std::string tmx::Map::tiledVersion() const { return d->tiledVersion; }

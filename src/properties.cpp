@@ -9,7 +9,7 @@ struct tmx::PropertyValue::Data {
     std::variant<std::string, int, float, bool, Color, Properties> value;
 };
 
-__NEOTMX_CLASS_HEADER_IMPL__(PropertyValue)
+__NEOTMX_CLASS_HEADER_IMPL__(tmx, PropertyValue)
 
 tmx::Type tmx::PropertyValue::type() const { return d->type; }
 const std::string& tmx::PropertyValue::stringValue() const { return std::get<std::string>(d->value); }
@@ -25,7 +25,7 @@ struct tmx::Properties::Data {
     std::map<std::string, PropertyValue> properties;
 };
 
-__NEOTMX_CLASS_HEADER_IMPL__(Properties)
+__NEOTMX_CLASS_HEADER_IMPL__(tmx, Properties)
 
 bool tmx::Properties::hasProperty(const std::string& name) const { return d->properties.contains(name); }
 
@@ -86,6 +86,6 @@ void tmx::Properties::parseProperty(tinyxml2::XMLElement* property) {
     }
 
     PropertyValue value;
-    value.d = DPointer(data);
+    value.d = internal::DPointer(data);
     d->properties[name] = value;
 }

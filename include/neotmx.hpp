@@ -16,13 +16,13 @@
     Type& operator=(Type&&) noexcept;     \
     ~Type();
 
-#define __NEOTMX_CLASS_HEADER_IMPL__(Type)                           \
-    tmx::Type::Type() = default;                                     \
-    tmx::Type::Type(const tmx::Type&) = default;                     \
-    tmx::Type::Type(tmx::Type&&) noexcept = default;                 \
-    tmx::Type& tmx::Type::operator=(const tmx::Type&) = default;     \
-    tmx::Type& tmx::Type::operator=(tmx::Type&&) noexcept = default; \
-    tmx::Type::~Type() = default;
+#define __NEOTMX_CLASS_HEADER_IMPL__(Namespace, Type)                                  \
+    Namespace::Type::Type() = default;                                                 \
+    Namespace::Type::Type(const Namespace::Type&) = default;                           \
+    Namespace::Type::Type(Namespace::Type&&) noexcept = default;                       \
+    Namespace::Type& Namespace::Type::operator=(const Namespace::Type&) = default;     \
+    Namespace::Type& Namespace::Type::operator=(Namespace::Type&&) noexcept = default; \
+    Namespace::Type::~Type() = default;
 
 namespace tinyxml2 {
     class XMLElement;
@@ -35,8 +35,13 @@ namespace tmx {
 
     Color colorFromString(const std::string& str);
 
-    template <typename T>
-    class DPointer;
+    namespace internal {
+        template <typename T>
+        class DPointer;
+
+        class AbstractLayer;
+        class DataBlock;
+    }
 
     enum class Type : unsigned char;
 
@@ -45,7 +50,7 @@ namespace tmx {
     class Properties;
     class Map;
     class Tileset;
-    class AbstractLayer;
+    class Image;
     class TileLayer;
     class Layer;
 } // namespace tmx
@@ -77,7 +82,7 @@ private:
 };
 
 template <typename T>
-class tmx::DPointer {
+class tmx::internal::DPointer {
 public:
     DPointer() : ptr(std::make_unique<T>()) {}
     explicit DPointer(const T& data) : ptr(std::make_unique<T>(data)) {}
@@ -132,7 +137,7 @@ public:
 
 private:
     struct Data;
-    DPointer<Data> d;
+    internal::DPointer<Data> d;
 };
 
 class tmx::Properties {
@@ -150,7 +155,7 @@ private:
     void parseProperty(tinyxml2::XMLElement* property);
 
     struct Data;
-    DPointer<Data> d;
+    internal::DPointer<Data> d;
 };
 
 class tmx::Map : public Properties {
@@ -191,7 +196,7 @@ private:
     void parseLayers(tinyxml2::XMLElement* root);
 
     struct Data;
-    DPointer<Data> d;
+    internal::DPointer<Data> d;
 };
 
 class tmx::Tileset : public Properties {
@@ -243,10 +248,12 @@ private:
     void parse(tinyxml2::XMLElement* root);
 
     struct Data;
-    DPointer<Data> d;
+    internal::DPointer<Data> d;
 };
 
-class tmx::AbstractLayer : public Properties {
+class tmx::Image {};
+
+class tmx::internal::AbstractLayer : public Properties {
 public:
     __NEOTMX_CLASS_HEADER_DEF__(AbstractLayer)
 
@@ -264,10 +271,10 @@ protected:
 
 private:
     struct Data;
-    DPointer<Data> d;
+    internal::DPointer<Data> d;
 };
 
-class tmx::TileLayer : public AbstractLayer {
+class tmx::TileLayer : public internal::AbstractLayer {
     friend class Map;
 
 public:
@@ -292,7 +299,7 @@ private:
     void checkBounds(int x, int y) const;
 
     struct Data;
-    DPointer<Data> d;
+    internal::DPointer<Data> d;
 };
 
 class tmx::Layer {
@@ -311,7 +318,7 @@ private:
     static std::string typeName(Type type);
 
     struct Data;
-    DPointer<Data> d;
+    internal::DPointer<Data> d;
 };
 
 #endif // NEOTMX_HPP

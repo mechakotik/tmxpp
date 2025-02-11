@@ -6,14 +6,14 @@ struct tmx::Layer::Data {
     std::variant<TileLayer> layer;
 };
 
-__NEOTMX_CLASS_HEADER_IMPL__(Layer)
+__NEOTMX_CLASS_HEADER_IMPL__(tmx, Layer)
 
 tmx::Layer::Layer(TileLayer&& layer) : Layer() {
     d->type = Type::TILE;
     d->layer = std::move(layer);
 }
 
-tmx::Layer::Type tmx::Layer::type() const {return d->type;}
+tmx::Layer::Type tmx::Layer::type() const { return d->type; }
 
 const tmx::TileLayer& tmx::Layer::tileLayer() const {
     if(d->type != Type::TILE) {

@@ -23,7 +23,7 @@ struct tmx::Tileset::Data {
     int gridHeight = 0;
 };
 
-__NEOTMX_CLASS_HEADER_IMPL__(Tileset)
+__NEOTMX_CLASS_HEADER_IMPL__(tmx, Tileset)
 
 int tmx::Tileset::firstGID() const { return d->firstGID; }
 std::string tmx::Tileset::source() const { return d->source; }

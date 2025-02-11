@@ -1,5 +1,5 @@
-#include <neotmx.hpp>
 #include <tinyxml2.h>
+#include <neotmx.hpp>
 #include <sstream>
 
 struct tmx::TileLayer::Data {
@@ -10,7 +10,7 @@ struct tmx::TileLayer::Data {
     std::string compression;
 };
 
-__NEOTMX_CLASS_HEADER_IMPL__(TileLayer)
+__NEOTMX_CLASS_HEADER_IMPL__(tmx, TileLayer)
 
 const std::vector<std::vector<unsigned int>>& tmx::TileLayer::data() const { return d->data; }
 int tmx::TileLayer::width() const { return d->width; }
