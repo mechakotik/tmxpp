@@ -244,6 +244,8 @@ public:
     [[nodiscard]] int gridWidth() const;
     [[nodiscard]] int gridHeight() const;
 
+    [[nodiscard]] const Image& image() const;
+
 private:
     void parse(tinyxml2::XMLElement* root);
 
@@ -251,7 +253,26 @@ private:
     internal::DPointer<Data> d;
 };
 
-class tmx::Image {};
+class tmx::Image {
+    friend class Tileset;
+
+public:
+    enum class Type : unsigned char {EMPTY, EXTERNAL, EMBEDDED};
+
+    __NEOTMX_CLASS_HEADER_DEF__(Image)
+
+    [[nodiscard]] Type type() const;
+    [[nodiscard]] const std::string& source() const;
+    [[nodiscard]] Color transparentColor() const;
+    [[nodiscard]] int width() const;
+    [[nodiscard]] int height() const;
+
+private:
+    void parse(tinyxml2::XMLElement* root);
+
+    struct Data;
+    internal::DPointer<Data> d;
+};
 
 class tmx::internal::AbstractLayer : public Properties {
 public:

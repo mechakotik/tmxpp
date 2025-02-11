@@ -11,6 +11,7 @@ add_library(neotmx STATIC
         src/abstract_layer.cpp
         src/tile_layer.cpp
         src/layer.cpp
+        src/image.cpp
         external/tinyxml2/tinyxml2.cpp
 )
 

@@ -64,6 +64,13 @@ TEST_F(BasicTest, Tileset) {
     EXPECT_EQ(tileset.objectAlignment(), tmx::Tileset::ObjectAlignment::UNSPECIFIED);
     EXPECT_EQ(tileset.tileRenderSize(), tmx::Tileset::TileRenderSize::TILE);
     EXPECT_EQ(tileset.fillMode(), tmx::Tileset::FillMode::STRETCH);
+
+    // Image
+    tmx::Image image = tileset.image();
+    EXPECT_EQ(image.type(), tmx::Image::Type::EXTERNAL);
+    EXPECT_EQ(image.source(), "pf1.png");
+    EXPECT_EQ(image.width(), 192);
+    EXPECT_EQ(image.height(), 176);
 }
 
 TEST_F(BasicTest, Layers) {
