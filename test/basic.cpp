@@ -73,6 +73,25 @@ TEST_F(BasicTest, Tileset) {
     EXPECT_EQ(image.height(), 176);
 }
 
+TEST_F(BasicTest, Tile) {
+    // Tileset and requires tiles exist
+    ASSERT_EQ(map.tilesets().size(), 1);
+    std::vector<tmx::Tile> tiles = map.tilesets()[0].tiles();
+    ASSERT_GE(tiles.size(), 5);
+
+    EXPECT_EQ(tiles[0].id(), 6);
+    EXPECT_EQ(tiles[0].className(), "");
+    EXPECT_EQ(tiles[0].position().x, 0);
+    EXPECT_EQ(tiles[0].position().y, 0);
+    EXPECT_EQ(tiles[0].width(), 0);
+    EXPECT_EQ(tiles[0].height(), 0);
+
+    EXPECT_EQ(tiles[1].id(), 7);
+    EXPECT_EQ(tiles[2].id(), 8);
+    EXPECT_EQ(tiles[3].id(), 10);
+    EXPECT_EQ(tiles[4].id(), 11);
+}
+
 TEST_F(BasicTest, Layers) {
     ASSERT_EQ(map.layers().size(), 3);
     ASSERT_EQ(map.layers()[0].type(), tmx::Layer::Type::TILE);

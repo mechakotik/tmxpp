@@ -1,5 +1,5 @@
-#include <neotmx.hpp>
 #include <tinyxml2.h>
+#include <neotmx.hpp>
 
 struct tmx::Image::Data {
     Type type = Type::EMPTY;
@@ -11,11 +11,11 @@ struct tmx::Image::Data {
 
 __NEOTMX_CLASS_HEADER_IMPL__(tmx, Image)
 
-tmx::Image::Type tmx::Image::type() const {return d->type;}
-const std::string& tmx::Image::source() const {return d->source;}
-tmx::Color tmx::Image::transparentColor() const {return d->transparentColor;}
-int tmx::Image::width() const {return d->width;}
-int tmx::Image::height() const {return d->height;}
+tmx::Image::Type tmx::Image::type() const { return d->type; }
+const std::string& tmx::Image::source() const { return d->source; }
+tmx::Color tmx::Image::transparentColor() const { return d->transparentColor; }
+int tmx::Image::width() const { return d->width; }
+int tmx::Image::height() const { return d->height; }
 
 void tmx::Image::parse(tinyxml2::XMLElement* root) {
     if(root == nullptr) {

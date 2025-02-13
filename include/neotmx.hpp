@@ -50,6 +50,7 @@ namespace tmx {
     class Properties;
     class Map;
     class Tileset;
+    class Tile;
     class Image;
     class TileLayer;
     class Layer;
@@ -245,6 +246,29 @@ public:
     [[nodiscard]] int gridHeight() const;
 
     [[nodiscard]] const Image& image() const;
+    [[nodiscard]] const std::vector<Tile>& tiles() const;
+
+private:
+    void parse(tinyxml2::XMLElement* root);
+    void parseTiles(tinyxml2::XMLElement* root);
+
+    struct Data;
+    internal::DPointer<Data> d;
+};
+
+class tmx::Tile : public Properties {
+    friend class Tileset;
+
+public:
+    __NEOTMX_CLASS_HEADER_DEF__(Tile)
+
+    [[nodiscard]] int id() const;
+    [[nodiscard]] std::string className() const;
+    [[nodiscard]] IntPoint position() const;
+    [[nodiscard]] float width() const;
+    [[nodiscard]] float height() const;
+
+    [[nodiscard]] Image image() const;
 
 private:
     void parse(tinyxml2::XMLElement* root);
@@ -255,9 +279,10 @@ private:
 
 class tmx::Image {
     friend class Tileset;
+    friend class Tile;
 
 public:
-    enum class Type : unsigned char {EMPTY, EXTERNAL, EMBEDDED};
+    enum class Type : unsigned char { EMPTY, EXTERNAL, EMBEDDED };
 
     __NEOTMX_CLASS_HEADER_DEF__(Image)
 

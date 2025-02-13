@@ -23,6 +23,7 @@ struct tmx::Tileset::Data {
     int gridHeight = 0;
 
     Image image;
+    std::vector<Tile> tiles;
 };
 
 __NEOTMX_CLASS_HEADER_IMPL__(tmx, Tileset)
@@ -46,7 +47,8 @@ tmx::Tileset::GridOrientation tmx::Tileset::gridOrientation() const { return d->
 int tmx::Tileset::gridWidth() const { return d->gridWidth; }
 int tmx::Tileset::gridHeight() const { return d->gridHeight; }
 
-const tmx::Image& tmx::Tileset::image() const {return d->image;}
+const tmx::Image& tmx::Tileset::image() const { return d->image; }
+const std::vector<tmx::Tile>& tmx::Tileset::tiles() const { return d->tiles; }
 
 void tmx::Tileset::parseFromData(const std::string& data) {
     tinyxml2::XMLDocument doc;
@@ -166,5 +168,16 @@ void tmx::Tileset::parse(tinyxml2::XMLElement* root) {
         d->image.parse(root->FirstChildElement("image"));
     }
 
+    parseTiles(root);
     Properties::parse(root->FirstChildElement("properties"));
+}
+
+void tmx::Tileset::parseTiles(tinyxml2::XMLElement* root) {
+    tinyxml2::XMLElement* element = root->FirstChildElement("tile");
+    while(element != nullptr) {
+        Tile tile;
+        tile.parse(element);
+        d->tiles.push_back(tile);
+        element = element->NextSiblingElement();
+    }
 }
