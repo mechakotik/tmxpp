@@ -63,9 +63,9 @@ void tmx::Tileset::parseFromFile(std::filesystem::path path, LoaderType loader) 
     tinyxml2::XMLDocument doc;
     tinyxml2::XMLError error;
     if(loader == nullptr) {
-        doc.LoadFile(path.string().c_str());
+        error = doc.LoadFile(path.string().c_str());
     } else {
-        doc.Parse(loader(path).c_str());
+        error = doc.Parse(loader(path).c_str());
     }
     if(error != 0) {
         throw Exception("XML parse failed (error code " + std::to_string(error) + ")");
