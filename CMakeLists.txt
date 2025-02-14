@@ -24,7 +24,11 @@ target_include_directories(neotmx PRIVATE
 add_subdirectory(external/googletest)
 enable_testing()
 
-add_executable(neotmx_test test/basic.cpp)
+add_executable(neotmx_test
+        test/basic.cpp
+        test/external_tileset.cpp
+)
+
 target_link_libraries(neotmx_test GTest::gtest_main neotmx)
 target_include_directories(neotmx_test PRIVATE include)
 file(COPY ${CMAKE_SOURCE_DIR}/test/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

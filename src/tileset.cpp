@@ -56,16 +56,21 @@ void tmx::Tileset::parseFromData(const std::string& data) {
     if(error != 0) {
         throw Exception("XML parse failed (error code " + std::to_string(error) + ")");
     }
-    parse(doc.RootElement()->FirstChildElement("tileset"));
+    parse(doc.FirstChildElement("tileset"));
 }
 
-void tmx::Tileset::parseFromFile(const std::string& filename) {
+void tmx::Tileset::parseFromFile(std::filesystem::path path, LoaderType loader) {
     tinyxml2::XMLDocument doc;
-    tinyxml2::XMLError error = doc.LoadFile(filename.c_str());
+    tinyxml2::XMLError error;
+    if(loader == nullptr) {
+        doc.LoadFile(path.c_str());
+    } else {
+        doc.Parse(loader(path).c_str());
+    }
     if(error != 0) {
         throw Exception("XML parse failed (error code " + std::to_string(error) + ")");
     }
-    parse(doc.RootElement()->FirstChildElement("tileset"));
+    parse(doc.FirstChildElement("tileset"));
 }
 
 void tmx::Tileset::parse(tinyxml2::XMLElement* root) {

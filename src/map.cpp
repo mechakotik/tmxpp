@@ -23,6 +23,9 @@ struct tmx::Map::Data {
 
     std::vector<Tileset> tilesets;
     std::vector<Layer> layers;
+
+    std::filesystem::path path;
+    LoaderType loader;
 };
 
 __NEOTMX_CLASS_HEADER_IMPL__(tmx, Map)
@@ -56,12 +59,19 @@ void tmx::Map::parseFromData(const std::string& data) {
     parse(doc.FirstChildElement("map"));
 }
 
-void tmx::Map::parseFromFile(const std::string& filename) {
+void tmx::Map::parseFromFile(std::filesystem::path path, LoaderType loader) {
     tinyxml2::XMLDocument doc;
-    tinyxml2::XMLError error = doc.LoadFile(filename.c_str());
+    tinyxml2::XMLError error = tinyxml2::XML_SUCCESS;
+    if(loader == nullptr) {
+        error = doc.LoadFile(path.c_str());
+    } else {
+        error = doc.Parse(loader(path).c_str());
+    }
     if(error != 0) {
         throw Exception("XML parse failed (error code " + std::to_string(error) + ")");
     }
+    d->path = path;
+    d->loader = loader;
     parse(doc.FirstChildElement("map"));
 }
 
@@ -156,6 +166,9 @@ void tmx::Map::parseTilesets(tinyxml2::XMLElement* root) {
     while(element != nullptr) {
         Tileset tileset;
         tileset.parse(element);
+        if(!tileset.source().empty()) {
+            tileset.parseFromFile(d->path.parent_path() / tileset.source(), d->loader);
+        }
         d->tilesets.push_back(tileset);
         element = element->NextSiblingElement("tileset");
     }

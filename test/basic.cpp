@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <fstream>
 #include <neotmx.hpp>
 
 class BasicTest : public testing::Test {

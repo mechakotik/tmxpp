@@ -7,6 +7,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <functional>
+#include <filesystem>
 
 #define __NEOTMX_CLASS_HEADER_DEF__(Type) \
     Type();                               \
@@ -35,15 +37,9 @@ namespace tmx {
 
     Color colorFromString(const std::string& str);
 
-    namespace internal {
-        template <typename T>
-        class DPointer;
-
-        class AbstractLayer;
-        class DataBlock;
-    }
-
     enum class Type : unsigned char;
+
+    using LoaderType = std::function<std::string(std::filesystem::path)>;
 
     class Exception;
     class PropertyValue;
@@ -54,6 +50,14 @@ namespace tmx {
     class Image;
     class TileLayer;
     class Layer;
+
+    namespace internal {
+        template <typename T>
+        class DPointer;
+
+        class AbstractLayer;
+        class DataBlock;
+    }
 } // namespace tmx
 
 struct tmx::Point {
@@ -169,7 +173,7 @@ public:
     __NEOTMX_CLASS_HEADER_DEF__(Map)
 
     void parseFromData(const std::string& data);
-    void parseFromFile(const std::string& filename);
+    void parseFromFile(std::filesystem::path path, LoaderType loader = nullptr);
 
     [[nodiscard]] std::string version() const;
     [[nodiscard]] std::string tiledVersion() const;
@@ -224,7 +228,7 @@ public:
     __NEOTMX_CLASS_HEADER_DEF__(Tileset)
 
     void parseFromData(const std::string& data);
-    void parseFromFile(const std::string& filename);
+    void parseFromFile(std::filesystem::path path, LoaderType loader = nullptr);
 
     [[nodiscard]] int firstGID() const;
     [[nodiscard]] std::string source() const;
