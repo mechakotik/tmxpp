@@ -25,7 +25,7 @@ struct tmx::Map::Data {
     std::vector<Layer> layers;
 
     std::filesystem::path path;
-    LoaderType loader;
+    LoaderType loader = nullptr;
 };
 
 __NEOTMX_CLASS_HEADER_IMPL__(tmx, Map)
@@ -63,7 +63,7 @@ void tmx::Map::parseFromFile(std::filesystem::path path, LoaderType loader) {
     tinyxml2::XMLDocument doc;
     tinyxml2::XMLError error = tinyxml2::XML_SUCCESS;
     if(loader == nullptr) {
-        error = doc.LoadFile(path.c_str());
+        error = doc.LoadFile(path.string().c_str());
     } else {
         error = doc.Parse(loader(path).c_str());
     }
