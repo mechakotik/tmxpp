@@ -61,8 +61,8 @@ namespace tmx {
 } // namespace tmx
 
 struct tmx::Point {
-    float x = 0;
-    float y = 0;
+    double x = 0;
+    double y = 0;
 };
 
 struct tmx::IntPoint {
@@ -269,8 +269,8 @@ public:
     [[nodiscard]] int id() const;
     [[nodiscard]] std::string className() const;
     [[nodiscard]] IntPoint position() const;
-    [[nodiscard]] float width() const;
-    [[nodiscard]] float height() const;
+    [[nodiscard]] int width() const;
+    [[nodiscard]] int height() const;
 
     [[nodiscard]] Image image() const;
 
@@ -310,7 +310,7 @@ public:
     [[nodiscard]] int id() const;
     [[nodiscard]] const std::string& name() const;
     [[nodiscard]] const std::string& className() const;
-    [[nodiscard]] float opacity() const;
+    [[nodiscard]] double opacity() const;
     [[nodiscard]] bool visible() const;
     [[nodiscard]] Color tintColor() const;
     [[nodiscard]] Point offset() const;

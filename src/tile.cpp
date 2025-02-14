@@ -16,8 +16,8 @@ __NEOTMX_CLASS_HEADER_IMPL__(tmx, Tile)
 int tmx::Tile::id() const { return d->id; }
 std::string tmx::Tile::className() const { return d->className; }
 tmx::IntPoint tmx::Tile::position() const { return d->position; }
-float tmx::Tile::width() const { return d->width; }
-float tmx::Tile::height() const { return d->height; }
+int tmx::Tile::width() const { return d->width; }
+int tmx::Tile::height() const { return d->height; }
 
 tmx::Image tmx::Tile::image() const { return d->image; }
 
