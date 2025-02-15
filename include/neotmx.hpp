@@ -264,6 +264,11 @@ class tmx::Tile : public Properties {
     friend class Tileset;
 
 public:
+    struct AnimationFrame {
+        int id = 0;
+        int duration = 0;
+    };
+
     __NEOTMX_CLASS_HEADER_DEF__(Tile)
 
     [[nodiscard]] int id() const;
@@ -273,9 +278,11 @@ public:
     [[nodiscard]] int height() const;
 
     [[nodiscard]] Image image() const;
+    [[nodiscard]] const std::vector<AnimationFrame>& animation() const;
 
 private:
     void parse(tinyxml2::XMLElement* root);
+    void parseAnimation(tinyxml2::XMLElement* root);
 
     struct Data;
     internal::DPointer<Data> d;

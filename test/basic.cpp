@@ -76,19 +76,32 @@ TEST_F(BasicTest, Tile) {
     // Tileset and requires tiles exist
     ASSERT_EQ(map.tilesets().size(), 1);
     std::vector<tmx::Tile> tiles = map.tilesets()[0].tiles();
-    ASSERT_GE(tiles.size(), 5);
 
-    EXPECT_EQ(tiles[0].id(), 6);
-    EXPECT_EQ(tiles[0].className(), "");
-    EXPECT_EQ(tiles[0].position().x, 0);
-    EXPECT_EQ(tiles[0].position().y, 0);
-    EXPECT_EQ(tiles[0].width(), 0);
-    EXPECT_EQ(tiles[0].height(), 0);
+    std::map<int, tmx::Tile> tile;
+    for(tmx::Tile tiles : map.tilesets()[0].tiles()) {
+        tile[tiles.id()] = tiles;
+    }
 
-    EXPECT_EQ(tiles[1].id(), 7);
-    EXPECT_EQ(tiles[2].id(), 8);
-    EXPECT_EQ(tiles[3].id(), 10);
-    EXPECT_EQ(tiles[4].id(), 11);
+    EXPECT_EQ(tile[6].id(), 6);
+    EXPECT_EQ(tile[6].className(), "");
+    EXPECT_EQ(tile[6].position().x, 0);
+    EXPECT_EQ(tile[6].position().y, 0);
+    EXPECT_EQ(tile[6].width(), 0);
+    EXPECT_EQ(tile[6].height(), 0);
+
+    EXPECT_EQ(tile[7].id(), 7);
+    EXPECT_EQ(tile[8].id(), 8);
+    EXPECT_EQ(tile[10].id(), 10);
+    EXPECT_EQ(tile[11].id(), 11);
+
+    auto animation = tile[120].animation();
+    EXPECT_EQ(animation.size(), 3);
+    EXPECT_EQ(animation[0].id, 120);
+    EXPECT_EQ(animation[1].id, 121);
+    EXPECT_EQ(animation[2].id, 122);
+    EXPECT_EQ(animation[0].duration, 166);
+    EXPECT_EQ(animation[1].duration, 166);
+    EXPECT_EQ(animation[2].duration, 166);
 }
 
 TEST_F(BasicTest, Layers) {
