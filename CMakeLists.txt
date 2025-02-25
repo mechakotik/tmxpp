@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.30)
 project(tmxpp)
 
+option(TMXPP_TEST "Build tests" OFF)
+
 set(CMAKE_CXX_STANDARD 20)
 
 add_library(tmxpp STATIC
@@ -23,17 +25,19 @@ target_include_directories(tmxpp PRIVATE
         external/tinyxml2
 )
 
-add_subdirectory(external/googletest)
-enable_testing()
+if(TMXPP_TEST)
+    add_subdirectory(external/googletest)
+    enable_testing()
 
-add_executable(tmxpp_test
-        test/basic.cpp
-        test/external_tileset.cpp
-)
+    add_executable(tmxpp_test
+            test/basic.cpp
+            test/external_tileset.cpp
+    )
 
-target_link_libraries(tmxpp_test GTest::gtest_main tmxpp)
-target_include_directories(tmxpp_test PRIVATE include)
-file(COPY ${CMAKE_SOURCE_DIR}/test/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    target_link_libraries(tmxpp_test GTest::gtest_main tmxpp)
+    target_include_directories(tmxpp_test PRIVATE include)
+    file(COPY ${CMAKE_SOURCE_DIR}/test/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-include(GoogleTest)
-gtest_discover_tests(tmxpp_test)
+    include(GoogleTest)
+    gtest_discover_tests(tmxpp_test)
+endif()
