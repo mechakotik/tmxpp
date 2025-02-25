@@ -3,13 +3,18 @@
 
 struct tmx::Layer::Data {
     Type type = Type::EMPTY;
-    std::variant<TileLayer> layer;
+    std::variant<TileLayer, ObjectGroup> layer;
 };
 
 __NEOTMX_CLASS_HEADER_IMPL__(tmx, Layer)
 
 tmx::Layer::Layer(TileLayer&& layer) : Layer() {
     d->type = Type::TILE;
+    d->layer = std::move(layer);
+}
+
+tmx::Layer::Layer(ObjectGroup&& layer) : Layer() {
+    d->type = Type::OBJECT;
     d->layer = std::move(layer);
 }
 

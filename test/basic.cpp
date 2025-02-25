@@ -73,7 +73,7 @@ TEST_F(BasicTest, Tileset) {
 }
 
 TEST_F(BasicTest, Tile) {
-    // Tileset and requires tiles exist
+    // Tileset and required tiles exist
     ASSERT_EQ(map.tilesets().size(), 1);
     std::vector<tmx::Tile> tiles = map.tilesets()[0].tiles();
 
@@ -104,7 +104,7 @@ TEST_F(BasicTest, Tile) {
     EXPECT_EQ(animation[2].duration, 166);
 }
 
-TEST_F(BasicTest, Layers) {
+TEST_F(BasicTest, Layer) {
     ASSERT_EQ(map.layers().size(), 3);
     ASSERT_EQ(map.layers()[0].type(), tmx::Layer::Type::TILE);
     ASSERT_EQ(map.layers()[1].type(), tmx::Layer::Type::TILE);
@@ -168,4 +168,29 @@ TEST_F(BasicTest, Layers) {
     EXPECT_EQ(layer3.at(115, 27), 3);
     EXPECT_EQ(layer3.at(127, 27), 0);
     EXPECT_EQ(layer3.properties().size(), 0);
+}
+
+TEST_F(BasicTest, PolygonObject) {
+    ASSERT_EQ(map.tilesets().size(), 1);
+    std::vector<tmx::Tile> tiles = map.tilesets()[0].tiles();
+
+    std::map<int, tmx::Tile> tile;
+    for(tmx::Tile tiles : map.tilesets()[0].tiles()) {
+        tile[tiles.id()] = tiles;
+    }
+
+    std::vector<tmx::Object> objects = tile[6].objectGroup().objects();
+    ASSERT_EQ(objects.size(), 1);
+    ASSERT_EQ(objects[0].type(), tmx::Object::Type::POLYGON);
+
+    tmx::Polygon polygon = objects[0].polygon();
+    ASSERT_EQ(polygon.size(), 4);
+    ASSERT_DOUBLE_EQ(polygon[0].x, 0);
+    ASSERT_DOUBLE_EQ(polygon[0].y, 0);
+    ASSERT_DOUBLE_EQ(polygon[1].x, 16);
+    ASSERT_DOUBLE_EQ(polygon[1].y, 0);
+    ASSERT_DOUBLE_EQ(polygon[2].x, 16);
+    ASSERT_DOUBLE_EQ(polygon[2].y, 16);
+    ASSERT_DOUBLE_EQ(polygon[3].x, 0);
+    ASSERT_DOUBLE_EQ(polygon[3].y, 16);
 }

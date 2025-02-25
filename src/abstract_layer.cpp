@@ -13,7 +13,7 @@ struct tmx::internal::AbstractLayer::Data {
     bool visible = true;
     Color tintColor;
     Point offset;
-    Point parallaxFactor;
+    Point parallaxFactor{1, 1};
 };
 
 __NEOTMX_CLASS_HEADER_IMPL__(tmx::internal, AbstractLayer)

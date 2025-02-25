@@ -9,6 +9,7 @@ struct tmx::Tile::Data {
     int height;
 
     Image image;
+    ObjectGroup objectGroup;
     std::vector<AnimationFrame> animation;
 };
 
@@ -21,6 +22,7 @@ int tmx::Tile::width() const { return d->width; }
 int tmx::Tile::height() const { return d->height; }
 
 tmx::Image tmx::Tile::image() const { return d->image; }
+const tmx::ObjectGroup& tmx::Tile::objectGroup() const { return d->objectGroup; }
 const std::vector<tmx::Tile::AnimationFrame>& tmx::Tile::animation() const { return d->animation; }
 
 void tmx::Tile::parse(tinyxml2::XMLElement* root) {
@@ -40,6 +42,9 @@ void tmx::Tile::parse(tinyxml2::XMLElement* root) {
 
     if(root->FirstChildElement("image") != nullptr) {
         d->image.parse(root->FirstChildElement("image"));
+    }
+    if(root->FirstChildElement("objectgroup") != nullptr) {
+        d->objectGroup.parse(root->FirstChildElement("objectgroup"));
     }
     if(root->FirstChildElement("animation") != nullptr) {
         parseAnimation(root->FirstChildElement("animation"));

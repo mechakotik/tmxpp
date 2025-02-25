@@ -33,7 +33,11 @@ namespace tinyxml2 {
 namespace tmx {
     struct Point;
     struct IntPoint;
+    struct Ellipse;
     struct Color;
+
+    using Polygon = std::vector<Point>;
+    using Polyline = std::vector<Point>;
 
     Color colorFromString(const std::string& str);
 
@@ -49,6 +53,8 @@ namespace tmx {
     class Tile;
     class Image;
     class TileLayer;
+    class ObjectGroup;
+    class Object;
     class Layer;
 
     namespace internal {
@@ -68,6 +74,11 @@ struct tmx::Point {
 struct tmx::IntPoint {
     int x = 0;
     int y = 0;
+};
+
+struct tmx::Ellipse {
+    Point center;
+    Point size;
 };
 
 struct tmx::Color {
@@ -278,6 +289,7 @@ public:
     [[nodiscard]] int height() const;
 
     [[nodiscard]] Image image() const;
+    [[nodiscard]] const ObjectGroup& objectGroup() const;
     [[nodiscard]] const std::vector<AnimationFrame>& animation() const;
 
 private:
@@ -359,13 +371,66 @@ private:
     internal::DPointer<Data> d;
 };
 
+class tmx::ObjectGroup : public internal::AbstractLayer {
+    friend class Tile;
+
+public:
+    enum class DrawOrder : unsigned char { TOPDOWN, INDEX };
+
+    __NEOTMX_CLASS_HEADER_DEF__(ObjectGroup)
+
+    [[nodiscard]] Color color() const;
+    [[nodiscard]] DrawOrder drawOrder() const;
+    [[nodiscard]] const std::vector<Object>& objects() const;
+
+private:
+    void parse(tinyxml2::XMLElement* root);
+
+    struct Data;
+    internal::DPointer<Data> d;
+};
+
+class tmx::Object : public Properties {
+    friend class ObjectGroup;
+
+public:
+    enum class Type { EMPTY, ELLIPSE, POINT, POLYGON, POLYLINE, TEXT };
+
+    __NEOTMX_CLASS_HEADER_DEF__(Object)
+
+    [[nodiscard]] int id() const;
+    [[nodiscard]] std::string name() const;
+    [[nodiscard]] std::string className() const;
+    [[nodiscard]] Point position() const;
+    [[nodiscard]] Point size() const;
+    [[nodiscard]] double rotation() const;
+    [[nodiscard]] int gid() const;
+    [[nodiscard]] bool visible() const;
+
+    [[nodiscard]] Type type() const;
+    [[nodiscard]] Ellipse ellipse() const;
+    [[nodiscard]] Point point() const;
+    [[nodiscard]] const Polygon& polygon() const;
+    [[nodiscard]] const Polyline& polyline() const;
+
+private:
+    void parse(tinyxml2::XMLElement* root);
+    static std::vector<Point> parsePoints(const std::string& str);
+    void ensureType(Type type) const;
+    static std::string typeName(Type type);
+
+    struct Data;
+    internal::DPointer<Data> d;
+};
+
 class tmx::Layer {
 public:
-    enum class Type : uint8_t { EMPTY, TILE };
+    enum class Type : uint8_t { EMPTY, TILE, OBJECT };
 
     __NEOTMX_CLASS_HEADER_DEF__(Layer)
 
     explicit Layer(TileLayer&& layer);
+    explicit Layer(ObjectGroup&& layer);
 
     [[nodiscard]] Type type() const;
     [[nodiscard]] const TileLayer& tileLayer() const;
