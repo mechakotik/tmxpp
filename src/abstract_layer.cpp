@@ -1,6 +1,6 @@
 #include <tinyxml2.h>
 #include <iostream>
-#include <neotmx.hpp>
+#include <tmxpp.hpp>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -16,7 +16,7 @@ struct tmx::internal::AbstractLayer::Data {
     Point parallaxFactor{1, 1};
 };
 
-__NEOTMX_CLASS_HEADER_IMPL__(tmx::internal, AbstractLayer)
+__TMXPP_CLASS_HEADER_IMPL__(tmx::internal, AbstractLayer)
 
 int tmx::internal::AbstractLayer::id() const { return d->id; }
 const std::string& tmx::internal::AbstractLayer::name() const { return d->name; }

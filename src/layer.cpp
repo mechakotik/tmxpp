@@ -1,4 +1,4 @@
-#include <neotmx.hpp>
+#include <tmxpp.hpp>
 #include <variant>
 
 struct tmx::Layer::Data {
@@ -6,7 +6,7 @@ struct tmx::Layer::Data {
     std::variant<TileLayer, ObjectGroup> layer;
 };
 
-__NEOTMX_CLASS_HEADER_IMPL__(tmx, Layer)
+__TMXPP_CLASS_HEADER_IMPL__(tmx, Layer)
 
 tmx::Layer::Layer(TileLayer&& layer) : Layer() {
     d->type = Type::TILE;

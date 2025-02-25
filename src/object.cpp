@@ -1,5 +1,5 @@
 #include <tinyxml2.h>
-#include <neotmx.hpp>
+#include <tmxpp.hpp>
 #include <sstream>
 #include <string>
 #include <variant>
@@ -18,7 +18,7 @@ struct tmx::Object::Data {
     Type type = Type::EMPTY;
     std::variant<Ellipse, Point, std::vector<Point>> shape;
 };
-__NEOTMX_CLASS_HEADER_IMPL__(tmx, Object)
+__TMXPP_CLASS_HEADER_IMPL__(tmx, Object)
 
 int tmx::Object::id() const {return d->id;}
 std::string tmx::Object::name() const {return d->name;}

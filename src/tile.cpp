@@ -1,5 +1,5 @@
 #include <tinyxml2.h>
-#include <neotmx.hpp>
+#include <tmxpp.hpp>
 
 struct tmx::Tile::Data {
     int id = 0;
@@ -13,7 +13,7 @@ struct tmx::Tile::Data {
     std::vector<AnimationFrame> animation;
 };
 
-__NEOTMX_CLASS_HEADER_IMPL__(tmx, Tile)
+__TMXPP_CLASS_HEADER_IMPL__(tmx, Tile)
 
 int tmx::Tile::id() const { return d->id; }
 std::string tmx::Tile::className() const { return d->className; }

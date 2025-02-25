@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.30)
-project(neotmx)
+project(tmxpp)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_library(neotmx STATIC
+add_library(tmxpp STATIC
         src/map.cpp
         src/tileset.cpp
         src/properties.cpp
@@ -18,7 +18,7 @@ add_library(neotmx STATIC
         external/tinyxml2/tinyxml2.cpp
 )
 
-target_include_directories(neotmx PRIVATE
+target_include_directories(tmxpp PRIVATE
         include
         external/tinyxml2
 )
@@ -26,14 +26,14 @@ target_include_directories(neotmx PRIVATE
 add_subdirectory(external/googletest)
 enable_testing()
 
-add_executable(neotmx_test
+add_executable(tmxpp_test
         test/basic.cpp
         test/external_tileset.cpp
 )
 
-target_link_libraries(neotmx_test GTest::gtest_main neotmx)
-target_include_directories(neotmx_test PRIVATE include)
+target_link_libraries(tmxpp_test GTest::gtest_main tmxpp)
+target_include_directories(tmxpp_test PRIVATE include)
 file(COPY ${CMAKE_SOURCE_DIR}/test/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 include(GoogleTest)
-gtest_discover_tests(neotmx_test)
+gtest_discover_tests(tmxpp_test)

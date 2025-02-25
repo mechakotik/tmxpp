@@ -1,5 +1,5 @@
 #include <tinyxml2.h>
-#include <neotmx.hpp>
+#include <tmxpp.hpp>
 #include <string>
 #include <vector>
 
@@ -28,7 +28,7 @@ struct tmx::Map::Data {
     LoaderType loader = nullptr;
 };
 
-__NEOTMX_CLASS_HEADER_IMPL__(tmx, Map)
+__TMXPP_CLASS_HEADER_IMPL__(tmx, Map)
 
 std::string tmx::Map::version() const { return d->version; }
 std::string tmx::Map::tiledVersion() const { return d->tiledVersion; }

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <neotmx.hpp>
+#include <tmxpp.hpp>
 
 class ExternalTilesetTest : public testing::Test {
 protected:

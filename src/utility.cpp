@@ -1,4 +1,4 @@
-#include <neotmx.hpp>
+#include <tmxpp.hpp>
 
 tmx::Color tmx::colorFromString(const std::string& str) {
     auto convert = [str](char c) {

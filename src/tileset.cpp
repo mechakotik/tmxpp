@@ -1,5 +1,5 @@
 #include <tinyxml2.h>
-#include <neotmx.hpp>
+#include <tmxpp.hpp>
 #include <string>
 
 struct tmx::Tileset::Data {
@@ -26,7 +26,7 @@ struct tmx::Tileset::Data {
     std::vector<Tile> tiles;
 };
 
-__NEOTMX_CLASS_HEADER_IMPL__(tmx, Tileset)
+__TMXPP_CLASS_HEADER_IMPL__(tmx, Tileset)
 
 int tmx::Tileset::firstGID() const { return d->firstGID; }
 std::string tmx::Tileset::source() const { return d->source; }

@@ -1,5 +1,5 @@
-#ifndef NEOTMX_HPP
-#define NEOTMX_HPP
+#ifndef TMXPP_HPP
+#define TMXPP_HPP
 
 #include <exception>
 #include <map>
@@ -10,7 +10,7 @@
 #include <functional>
 #include <filesystem>
 
-#define __NEOTMX_CLASS_HEADER_DEF__(Type) \
+#define __TMXPP_CLASS_HEADER_DEF__(Type) \
     Type();                               \
     Type(const Type& other);              \
     Type(Type&& other) noexcept;          \
@@ -18,7 +18,7 @@
     Type& operator=(Type&&) noexcept;     \
     ~Type();
 
-#define __NEOTMX_CLASS_HEADER_IMPL__(Namespace, Type)                                  \
+#define __TMXPP_CLASS_HEADER_IMPL__(Namespace, Type)                                  \
     Namespace::Type::Type() = default;                                                 \
     Namespace::Type::Type(const Namespace::Type&) = default;                           \
     Namespace::Type::Type(Namespace::Type&&) noexcept = default;                       \
@@ -139,7 +139,7 @@ class tmx::PropertyValue {
     friend class Properties;
 
 public:
-    __NEOTMX_CLASS_HEADER_DEF__(PropertyValue)
+    __TMXPP_CLASS_HEADER_DEF__(PropertyValue)
 
     [[nodiscard]] Type type() const;
     [[nodiscard]] const std::string& stringValue() const;
@@ -158,7 +158,7 @@ private:
 
 class tmx::Properties {
 public:
-    __NEOTMX_CLASS_HEADER_DEF__(Properties)
+    __TMXPP_CLASS_HEADER_DEF__(Properties)
 
     [[nodiscard]] bool hasProperty(const std::string& name) const;
     [[nodiscard]] const PropertyValue& property(const std::string& name) const;
@@ -181,7 +181,7 @@ public:
     enum class StaggerAxis : unsigned char { X_AXIS, Y_AXIS };
     enum class StaggerIndex : unsigned char { EVEN, ODD };
 
-    __NEOTMX_CLASS_HEADER_DEF__(Map)
+    __TMXPP_CLASS_HEADER_DEF__(Map)
 
     void parseFromData(const std::string& data);
     void parseFromFile(std::filesystem::path path, LoaderType loader = nullptr);
@@ -236,7 +236,7 @@ public:
     enum class FillMode : unsigned char { STRETCH, PRESERVE_ASPECT_FIT };
     enum class GridOrientation : unsigned char { ORTHOGONAL, ISOMETRIC };
 
-    __NEOTMX_CLASS_HEADER_DEF__(Tileset)
+    __TMXPP_CLASS_HEADER_DEF__(Tileset)
 
     void parseFromData(const std::string& data);
     void parseFromFile(std::filesystem::path path, LoaderType loader = nullptr);
@@ -280,7 +280,7 @@ public:
         int duration = 0;
     };
 
-    __NEOTMX_CLASS_HEADER_DEF__(Tile)
+    __TMXPP_CLASS_HEADER_DEF__(Tile)
 
     [[nodiscard]] int id() const;
     [[nodiscard]] std::string className() const;
@@ -307,7 +307,7 @@ class tmx::Image {
 public:
     enum class Type : unsigned char { EMPTY, EXTERNAL, EMBEDDED };
 
-    __NEOTMX_CLASS_HEADER_DEF__(Image)
+    __TMXPP_CLASS_HEADER_DEF__(Image)
 
     [[nodiscard]] Type type() const;
     [[nodiscard]] const std::string& source() const;
@@ -324,7 +324,7 @@ private:
 
 class tmx::internal::AbstractLayer : public Properties {
 public:
-    __NEOTMX_CLASS_HEADER_DEF__(AbstractLayer)
+    __TMXPP_CLASS_HEADER_DEF__(AbstractLayer)
 
     [[nodiscard]] int id() const;
     [[nodiscard]] const std::string& name() const;
@@ -347,7 +347,7 @@ class tmx::TileLayer : public internal::AbstractLayer {
     friend class Map;
 
 public:
-    __NEOTMX_CLASS_HEADER_DEF__(TileLayer)
+    __TMXPP_CLASS_HEADER_DEF__(TileLayer)
 
     [[nodiscard]] const std::vector<std::vector<unsigned int>>& data() const;
     [[nodiscard]] int at(int x, int y) const;
@@ -377,7 +377,7 @@ class tmx::ObjectGroup : public internal::AbstractLayer {
 public:
     enum class DrawOrder : unsigned char { TOPDOWN, INDEX };
 
-    __NEOTMX_CLASS_HEADER_DEF__(ObjectGroup)
+    __TMXPP_CLASS_HEADER_DEF__(ObjectGroup)
 
     [[nodiscard]] Color color() const;
     [[nodiscard]] DrawOrder drawOrder() const;
@@ -396,7 +396,7 @@ class tmx::Object : public Properties {
 public:
     enum class Type { EMPTY, ELLIPSE, POINT, POLYGON, POLYLINE, TEXT };
 
-    __NEOTMX_CLASS_HEADER_DEF__(Object)
+    __TMXPP_CLASS_HEADER_DEF__(Object)
 
     [[nodiscard]] int id() const;
     [[nodiscard]] std::string name() const;
@@ -427,7 +427,7 @@ class tmx::Layer {
 public:
     enum class Type : uint8_t { EMPTY, TILE, OBJECT };
 
-    __NEOTMX_CLASS_HEADER_DEF__(Layer)
+    __TMXPP_CLASS_HEADER_DEF__(Layer)
 
     explicit Layer(TileLayer&& layer);
     explicit Layer(ObjectGroup&& layer);
@@ -443,4 +443,4 @@ private:
     internal::DPointer<Data> d;
 };
 
-#endif // NEOTMX_HPP
+#endif // TMXPP_HPP

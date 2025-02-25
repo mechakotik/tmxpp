@@ -1,4 +1,4 @@
-#include <neotmx.hpp>
+#include <tmxpp.hpp>
 #include <tinyxml2.h>
 #include <vector>
 
@@ -8,7 +8,7 @@ struct tmx::ObjectGroup::Data {
     std::vector<Object> objects;
 };
 
-__NEOTMX_CLASS_HEADER_IMPL__(tmx, ObjectGroup)
+__TMXPP_CLASS_HEADER_IMPL__(tmx, ObjectGroup)
 
 tmx::Color tmx::ObjectGroup::color() const {return d->color;}
 tmx::ObjectGroup::DrawOrder tmx::ObjectGroup::drawOrder() const {return d->drawOrder;}
