@@ -1,4 +1,5 @@
 #include <tinyxml2.h>
+#include <cstddef>
 #include <cstdint>
 #include <iostream>
 #include <sstream>
@@ -6,6 +7,10 @@
 
 #ifdef TMXPP_BASE64
 #include <base64.hpp>
+#endif
+
+#ifdef TMXPP_ZSTD
+#include <zstd.h>
 #endif
 
 struct tmx::TileLayer::Data {
@@ -91,9 +96,7 @@ void tmx::TileLayer::parseData(tinyxml2::XMLElement* root) {
         parseCSVData(root->GetText());
     } else if(d->encoding == "base64") {
         #ifdef TMXPP_BASE64
-            std::string str = root->GetText();
-            str = decompressData(str, d->encoding);
-            parseBase64Data(str);
+            parseBase64Data(root->GetText());
         #else
             throw Exception("Tilemap uses base64 encoding, but tmxpp was build without base64 support");
         #endif
@@ -122,10 +125,6 @@ void tmx::TileLayer::parseCSVData(const std::string& str) {
     }
 }
 
-std::string tmx::TileLayer::decompressData(const std::string& str, std::string compression) {
-    return str;
-}
-
 void tmx::TileLayer::parseBase64Data(const std::string& str) {
 #ifdef TMXPP_BASE64
     auto begin = str.begin(), end = str.end();
@@ -135,7 +134,12 @@ void tmx::TileLayer::parseBase64Data(const std::string& str) {
     while(*std::prev(end, 1) == ' ' || *std::prev(end, 1) == '\n' || *std::prev(end, 1) == '\t') {
         --end;
     }
+
     std::string data = base64::from_base64(std::string_view(begin, end));
+    if(!d->compression.empty()) {
+        data = decompressData(data, d->compression);
+    }
+
     if(static_cast<int>(data.size()) < d->width * d->height * 4) {
         throw Exception("Wrong data format for layer " + name());
     }
@@ -153,4 +157,17 @@ void tmx::TileLayer::parseBase64Data(const std::string& str) {
         }
     }
 #endif
+}
+
+std::string tmx::TileLayer::decompressData(const std::string& str, std::string compression) {
+    if(compression == "zstd") {
+        #ifdef TMXPP_ZSTD
+        size_t decSize = ZSTD_getFrameContentSize(str.c_str(), str.size());
+        std::string dec(decSize, '\0');
+        ZSTD_decompress(dec.data(), decSize, str.c_str(), str.size());
+        return dec;
+        #else
+        throw Exception("Tilemap uses zstd compression, but tmxpp was build without zstd support");
+        #endif
+    }
 }

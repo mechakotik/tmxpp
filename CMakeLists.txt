@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.30)
 project(tmxpp)
 
 option(TMXPP_BASE64 "Support base64 encoded tilemaps" ON)
+option(TMXPP_ZSTD "Support zstd compressed tilemaps" ON)
 option(TMXPP_TEST "Build tests" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -31,6 +32,13 @@ if(TMXPP_BASE64)
     target_compile_definitions(tmxpp PRIVATE TMXPP_BASE64)
 endif()
 
+if(TMXPP_ZSTD)
+    target_compile_definitions(tmxpp PRIVATE TMXPP_ZSTD)
+    add_subdirectory(external/zstd/build/cmake EXCLUDE_FROM_ALL)
+    target_include_directories(tmxpp PRIVATE external/zstd/lib)
+    target_link_libraries(tmxpp libzstd_static)
+endif()
+
 if(TMXPP_TEST)
     add_subdirectory(external/googletest)
     enable_testing()
@@ -43,6 +51,9 @@ if(TMXPP_TEST)
 
     if(TMXPP_BASE64)
         target_compile_definitions(tmxpp_test PRIVATE TMXPP_BASE64)
+    endif()
+    if(TMXPP_ZSTD)
+        target_compile_definitions(tmxpp_test PRIVATE TMXPP_ZSTD)
     endif()
 
     target_link_libraries(tmxpp_test GTest::gtest_main tmxpp)
