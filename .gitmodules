@@ -4,3 +4,6 @@
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/google/googletest
+[submodule "external/base64"]
+	path = external/base64
+	url = https://github.com/tobiaslocker/base64

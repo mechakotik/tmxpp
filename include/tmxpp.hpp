@@ -365,6 +365,8 @@ private:
     void parse(tinyxml2::XMLElement* root);
     void parseData(tinyxml2::XMLElement* root);
     void parseCSVData(const std::string& str);
+    static std::string decompressData(const std::string& str, std::string compression);
+    void parseBase64Data(const std::string& str);
     void checkBounds(int x, int y) const;
 
     struct Data;

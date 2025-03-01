@@ -1,6 +1,12 @@
 #include <tinyxml2.h>
-#include <tmxpp.hpp>
+#include <cstdint>
+#include <iostream>
 #include <sstream>
+#include <tmxpp.hpp>
+
+#ifdef TMXPP_BASE64
+#include <base64.hpp>
+#endif
 
 struct tmx::TileLayer::Data {
     std::vector<std::vector<unsigned int>> data;
@@ -83,9 +89,17 @@ void tmx::TileLayer::parseData(tinyxml2::XMLElement* root) {
     d->data.assign(d->height, std::vector<unsigned int>(d->width, 0));
     if(d->encoding == "csv") {
         parseCSVData(root->GetText());
+    } else if(d->encoding == "base64") {
+        #ifdef TMXPP_BASE64
+            std::string str = root->GetText();
+            str = decompressData(str, d->encoding);
+            parseBase64Data(str);
+        #else
+            throw Exception("Tilemap uses base64 encoding, but tmxpp was build without base64 support");
+        #endif
+    } else {
+        throw Exception("Unknown encoding " + d->encoding);
     }
-
-    // TODO: base64, compression
 }
 
 void tmx::TileLayer::parseCSVData(const std::string& str) {
@@ -106,4 +120,37 @@ void tmx::TileLayer::parseCSVData(const std::string& str) {
             }
         }
     }
+}
+
+std::string tmx::TileLayer::decompressData(const std::string& str, std::string compression) {
+    return str;
+}
+
+void tmx::TileLayer::parseBase64Data(const std::string& str) {
+#ifdef TMXPP_BASE64
+    auto begin = str.begin(), end = str.end();
+    while(*begin == ' ' || *begin == '\n' || *begin == '\t') {
+        ++begin;
+    }
+    while(*std::prev(end, 1) == ' ' || *std::prev(end, 1) == '\n' || *std::prev(end, 1) == '\t') {
+        --end;
+    }
+    std::string data = base64::from_base64(std::string_view(begin, end));
+    if(static_cast<int>(data.size()) < d->width * d->height * 4) {
+        throw Exception("Wrong data format for layer " + name());
+    }
+
+    int pos = 0;
+    for(int y = 0; y < d->height; y++) {
+        for(int x = 0; x < d->width; x++) {
+            uint32_t value = 0;
+            value |= static_cast<uint32_t>(data[pos]);
+            value |= static_cast<uint32_t>(data[pos + 1]) << 8U;
+            value |= static_cast<uint32_t>(data[pos + 2]) << 16U;
+            value |= static_cast<uint32_t>(data[pos + 3]) << 24U;
+            d->data[y][x] = value;
+            pos += 4;
+        }
+    }
+#endif
 }

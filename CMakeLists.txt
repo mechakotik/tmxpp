@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.30)
 project(tmxpp)
 
+option(TMXPP_BASE64 "Support base64 encoded tilemaps" ON)
 option(TMXPP_TEST "Build tests" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -23,16 +24,26 @@ add_library(tmxpp STATIC
 target_include_directories(tmxpp PRIVATE
         include
         external/tinyxml2
+        external/base64/include
 )
+
+if(TMXPP_BASE64)
+    target_compile_definitions(tmxpp PRIVATE TMXPP_BASE64)
+endif()
 
 if(TMXPP_TEST)
     add_subdirectory(external/googletest)
     enable_testing()
 
     add_executable(tmxpp_test
+            test/base64.cpp
             test/basic.cpp
             test/external_tileset.cpp
     )
+
+    if(TMXPP_BASE64)
+        target_compile_definitions(tmxpp_test PRIVATE TMXPP_BASE64)
+    endif()
 
     target_link_libraries(tmxpp_test GTest::gtest_main tmxpp)
     target_include_directories(tmxpp_test PRIVATE include)
