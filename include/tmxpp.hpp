@@ -2,23 +2,23 @@
 #define TMXPP_HPP
 
 #include <exception>
+#include <filesystem>
+#include <functional>
 #include <map>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
-#include <functional>
-#include <filesystem>
 
 #define __TMXPP_CLASS_HEADER_DEF__(Type) \
-    Type();                               \
-    Type(const Type& other);              \
-    Type(Type&& other) noexcept;          \
-    Type& operator=(const Type&);         \
-    Type& operator=(Type&&) noexcept;     \
+    Type();                              \
+    Type(const Type& other);             \
+    Type(Type&& other) noexcept;         \
+    Type& operator=(const Type&);        \
+    Type& operator=(Type&&) noexcept;    \
     ~Type();
 
-#define __TMXPP_CLASS_HEADER_IMPL__(Namespace, Type)                                  \
+#define __TMXPP_CLASS_HEADER_IMPL__(Namespace, Type)                                   \
     Namespace::Type::Type() = default;                                                 \
     Namespace::Type::Type(const Namespace::Type&) = default;                           \
     Namespace::Type::Type(Namespace::Type&&) noexcept = default;                       \
@@ -365,7 +365,7 @@ private:
     void parse(tinyxml2::XMLElement* root);
     void parseData(tinyxml2::XMLElement* root);
     void parseCSVData(const std::string& str);
-    static std::string decompressData(const std::string& str, std::string compression);
+    static std::string decompressData(std::string& str, std::string compression);
     void parseBase64Data(const std::string& str);
     void checkBounds(int x, int y) const;
 

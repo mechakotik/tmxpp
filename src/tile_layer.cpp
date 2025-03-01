@@ -13,6 +13,11 @@
 #include <zstd.h>
 #endif
 
+#ifdef TMXPP_ZLIB
+#include <zconf.h>
+#include <zlib.h>
+#endif
+
 struct tmx::TileLayer::Data {
     std::vector<std::vector<unsigned int>> data;
     int width = 0;
@@ -95,11 +100,11 @@ void tmx::TileLayer::parseData(tinyxml2::XMLElement* root) {
     if(d->encoding == "csv") {
         parseCSVData(root->GetText());
     } else if(d->encoding == "base64") {
-        #ifdef TMXPP_BASE64
-            parseBase64Data(root->GetText());
-        #else
-            throw Exception("Tilemap uses base64 encoding, but tmxpp was build without base64 support");
-        #endif
+#ifdef TMXPP_BASE64
+        parseBase64Data(root->GetText());
+#else
+        throw Exception("Tilemap uses base64 encoding, but tmxpp was build without base64 support");
+#endif
     } else {
         throw Exception("Unknown encoding " + d->encoding);
     }
@@ -159,15 +164,57 @@ void tmx::TileLayer::parseBase64Data(const std::string& str) {
 #endif
 }
 
-std::string tmx::TileLayer::decompressData(const std::string& str, std::string compression) {
+std::string tmx::TileLayer::decompressData(std::string& str, std::string compression) {
     if(compression == "zstd") {
-        #ifdef TMXPP_ZSTD
+#ifdef TMXPP_ZSTD
         size_t decSize = ZSTD_getFrameContentSize(str.c_str(), str.size());
         std::string dec(decSize, '\0');
         ZSTD_decompress(dec.data(), decSize, str.c_str(), str.size());
         return dec;
-        #else
+#else
         throw Exception("Tilemap uses zstd compression, but tmxpp was build without zstd support");
-        #endif
+#endif
     }
+    if(compression == "zlib" || compression == "gzip") {
+#ifdef TMXPP_ZLIB
+        std::string dec;
+        char buf[1024];
+        z_stream infStream;
+        memset(&infStream, 0, sizeof(infStream));
+        infStream.zalloc = Z_NULL;
+        infStream.zfree = Z_NULL;
+        infStream.opaque = Z_NULL;
+        infStream.avail_in = str.size();
+        infStream.next_in = reinterpret_cast<Bytef*>(str.data());
+        if(compression == "zlib") {
+            if(inflateInit(&infStream) != Z_OK) {
+                throw Exception("zlib inflateInit failed");
+            }
+        } else {
+            if(inflateInit2(&infStream, 16 + MAX_WBITS) != Z_OK) {
+                throw Exception("zlib inflateInit failed");
+            }
+        }
+        while(true) {
+            infStream.avail_out = sizeof(buf);
+            infStream.next_out = reinterpret_cast<Bytef*>(buf);
+            int res = inflate(&infStream, 0);
+            if(dec.size() < infStream.total_out) {
+                dec.append(buf, infStream.total_out - dec.size());
+            }
+            if(res == Z_STREAM_END) {
+                break;
+            }
+            if(res != Z_OK) {
+                throw Exception("zlib decompress failed (error code " + std::to_string(res) + ")");
+            }
+        }
+        inflateEnd(&infStream);
+        return dec;
+#else
+        throw Exception("Tilemap uses zlib compression, but tmxpp was built without zlib support");
+#endif
+    }
+
+    throw Exception("Unsupported compression " + compression);
 }
