@@ -136,7 +136,7 @@ std::vector<tmx::Point> tmx::Object::parsePoints(const std::string& str) {
     Point point;
     char temp = '\0';
     while(ss >> point.x >> temp >> point.y) {
-        res.emplace_back(point.x, point.y);
+        res.push_back({point.x, point.y});
     }
 
     return res;
