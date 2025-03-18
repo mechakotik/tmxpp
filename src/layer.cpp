@@ -1,4 +1,5 @@
 #include <tmxpp.hpp>
+#include <utility>
 #include <variant>
 
 struct tmx::Layer::Data {
@@ -21,14 +22,19 @@ tmx::Layer::Layer(ObjectGroup&& layer) : Layer() {
 tmx::Layer::Type tmx::Layer::type() const { return d->type; }
 
 const tmx::TileLayer& tmx::Layer::tileLayer() const {
-    if(d->type != Type::TILE) {
-        throwWrongType(Type::TILE);
-    }
+    ensureType(Type::TILE);
     return std::get<TileLayer>(d->layer);
 }
 
-void tmx::Layer::throwWrongType(Type wanted) const {
-    throw Exception("Attempt to extract " + typeName(wanted) + " while storing " + typeName(d->type));
+const tmx::ObjectGroup& tmx::Layer::objectGroup() const {
+    ensureType(Type::OBJECT);
+    return std::get<ObjectGroup>(d->layer);
+}
+
+void tmx::Layer::ensureType(Type type) const {
+    if(d->type != type) {
+        throw Exception("Attempt to extract " + typeName(type) + " while storing " + typeName(d->type));
+    }
 }
 
 std::string tmx::Layer::typeName(Type type) {
@@ -37,6 +43,8 @@ std::string tmx::Layer::typeName(Type type) {
             return "nothing";
         case Type::TILE:
             return "tile layer";
+        case Type::OBJECT:
+            return "object group";
         default:
             return "unknown";
     }

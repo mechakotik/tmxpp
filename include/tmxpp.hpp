@@ -374,6 +374,7 @@ private:
 };
 
 class tmx::ObjectGroup : public internal::AbstractLayer {
+    friend class Map;
     friend class Tile;
 
 public:
@@ -436,9 +437,10 @@ public:
 
     [[nodiscard]] Type type() const;
     [[nodiscard]] const TileLayer& tileLayer() const;
+    [[nodiscard]] const ObjectGroup& objectGroup() const;
 
 private:
-    void throwWrongType(Type wanted) const;
+    void ensureType(Type type) const;
     static std::string typeName(Type type);
 
     struct Data;

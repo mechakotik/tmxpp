@@ -175,11 +175,18 @@ void tmx::Map::parseTilesets(tinyxml2::XMLElement* root) {
 }
 
 void tmx::Map::parseLayers(tinyxml2::XMLElement* root) {
-    tinyxml2::XMLElement* element = root->FirstChildElement("layer");
+    tinyxml2::XMLElement* element = root->FirstChildElement();
     while(element != nullptr) {
-        TileLayer layer;
-        layer.parse(element);
-        d->layers.emplace_back(std::move(layer));
-        element = element->NextSiblingElement("layer");
+        std::string name = element->Name();
+        if(name == "layer") {
+            TileLayer layer;
+            layer.parse(element);
+            d->layers.emplace_back(std::move(layer));
+        } else if(name == "objectgroup") {
+            ObjectGroup objectGroup;
+            objectGroup.parse(element);
+            d->layers.emplace_back(std::move(objectGroup));
+        }
+        element = element->NextSiblingElement();
     }
 }
