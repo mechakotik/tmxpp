@@ -1,7 +1,7 @@
 <h1 align="center">tmx++</h1>
 
 <div align="center">
-  
+
 ![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fghloc.vercel.app%2Fapi%2Fmechakotik%2Ftmxpp%2Fbadge%3Fbranch%3Dmain%26filter%3D.cpp%252C.hpp%252C%2521test&label=lines%20of%20code&color=4dc71f)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/mechakotik/tmxpp/cmake-multi-platform.yml)
 
@@ -23,6 +23,19 @@ add_subdirectory(external/tmxpp EXCLUDE_FROM_ALL)
 target_link_libraries(myproject PRIVATE tmxpp)
 target_include_directories(myproject PRIVATE external/tmxpp/include)
 ```
+
+## Installing system-wide
+
+Installation process is pretty standard for CMake projects.
+
+```sh
+mkdir build && cd build
+cmake .. -DBUILD_SHARED_LIBS=ON -DTMXPP_INSTALL=ON -DTMXPP_VENDORED=OFF
+cmake --build .
+sudo cmake --install .
+```
+
+Here `TMXPP_VENDORED=OFF` enables linking to external libraries, so it requires dependent libraries to be installed in system. You may also set ``TMXPP_VENDORED=ON`` here to use included dependencies.
 
 ## Usage example
 

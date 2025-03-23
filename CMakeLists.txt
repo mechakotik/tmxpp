@@ -5,6 +5,7 @@ option(TMXPP_VENDORED "Use vendored third-party libraries" ON)
 option(TMXPP_BASE64 "Support base64 encoded tilemaps" ON)
 option(TMXPP_ZSTD "Support zstd compressed tilemaps" ON)
 option(TMXPP_ZLIB "Support zlib and gzip compressed tilemaps" ON)
+option(TMXPP_INSTALL "Enable library installing" OFF)
 option(TMXPP_TEST "Build tests" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -74,6 +75,7 @@ if(TMXPP_ZLIB)
 endif()
 
 if(TMXPP_TEST)
+    set(INSTALL_GTEST OFF)
     add_subdirectory(external/googletest)
     enable_testing()
 
@@ -99,4 +101,9 @@ if(TMXPP_TEST)
 
     include(GoogleTest)
     gtest_discover_tests(tmxpp-test)
+endif()
+
+if(TMXPP_INSTALL)
+    install(TARGETS tmxpp)
+    install(FILES include/tmxpp.hpp TYPE INCLUDE)
 endif()
