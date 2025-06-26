@@ -4,7 +4,7 @@
 
 struct tmx::Layer::Data {
     Type type = Type::EMPTY;
-    std::variant<TileLayer, ObjectGroup> layer;
+    std::variant<TileLayer, ImageLayer, ObjectGroup> layer;
 };
 
 __TMXPP_CLASS_HEADER_IMPL__(tmx, Layer)
@@ -26,6 +26,11 @@ const tmx::TileLayer& tmx::Layer::tileLayer() const {
     return std::get<TileLayer>(d->layer);
 }
 
+const tmx::ImageLayer& tmx::Layer::imageLayer() const {
+    ensureType(Type::IMAGE);
+    return std::get<ImageLayer>(d->layer);
+}
+
 const tmx::ObjectGroup& tmx::Layer::objectGroup() const {
     ensureType(Type::OBJECT);
     return std::get<ObjectGroup>(d->layer);
@@ -43,6 +48,8 @@ std::string tmx::Layer::typeName(Type type) {
             return "nothing";
         case Type::TILE:
             return "tile layer";
+        case Type::IMAGE:
+            return "image layer";
         case Type::OBJECT:
             return "object group";
         default:

@@ -25,6 +25,7 @@ add_library(tmxpp
         src/object_group.cpp
         src/object.cpp
         src/text.cpp
+        src/image_layer.cpp
 )
 
 target_include_directories(tmxpp PRIVATE

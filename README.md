@@ -86,7 +86,6 @@ for(const tmx::Layer& layer : map.layers()) {
 ## Unsupported
 
 - Infinite maps (TODO)
-- Image layers (TODO)
 - Object templates (TODO, when I figure out a good way to implement it)
 - Embedded images (not planned, as not supported by Tiled itself while being in TMX specification)
 - Terrains and wang sets (not planned, used to build maps and probably irrelevant when rendering them)

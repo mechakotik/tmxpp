@@ -53,6 +53,7 @@ namespace tmx {
     class Tile;
     class Image;
     class TileLayer;
+    class ImageLayer;
     class ObjectGroup;
     class Object;
     class Text;
@@ -304,6 +305,7 @@ private:
 class tmx::Image {
     friend class Tileset;
     friend class Tile;
+    friend class ImageLayer;
 
 public:
     enum class Type : unsigned char { EMPTY, EXTERNAL, EMBEDDED };
@@ -374,6 +376,24 @@ private:
     internal::DPointer<Data> d;
 };
 
+// TODO: test this
+class tmx::ImageLayer : public internal::AbstractLayer {
+    friend class Map;
+
+public:
+    __TMXPP_CLASS_HEADER_DEF__(ImageLayer)
+
+    [[nodiscard]] const Image& image() const;
+    [[nodiscard]] bool repeatX() const;
+    [[nodiscard]] bool repeatY() const;
+
+private:
+    void parse(tinyxml2::XMLElement* root);
+
+    struct Data;
+    internal::DPointer<Data> d;
+};
+
 class tmx::ObjectGroup : public internal::AbstractLayer {
     friend class Map;
     friend class Tile;
@@ -428,6 +448,7 @@ private:
     internal::DPointer<Data> d;
 };
 
+// TODO: test this
 class tmx::Text {
     friend class Object;
 
@@ -459,7 +480,7 @@ private:
 
 class tmx::Layer {
 public:
-    enum class Type : uint8_t { EMPTY, TILE, OBJECT };
+    enum class Type : uint8_t { EMPTY, TILE, IMAGE, OBJECT };
 
     __TMXPP_CLASS_HEADER_DEF__(Layer)
 
@@ -468,6 +489,7 @@ public:
 
     [[nodiscard]] Type type() const;
     [[nodiscard]] const TileLayer& tileLayer() const;
+    [[nodiscard]] const ImageLayer& imageLayer() const;
     [[nodiscard]] const ObjectGroup& objectGroup() const;
 
 private:
