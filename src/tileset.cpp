@@ -1,6 +1,6 @@
 #include <tinyxml2.h>
-#include <tmxpp.hpp>
 #include <string>
+#include <tmxpp.hpp>
 
 struct tmx::Tileset::Data {
     int firstGID = 1;
@@ -59,9 +59,9 @@ void tmx::Tileset::parseFromData(const std::string& data) {
     parse(doc.FirstChildElement("tileset"));
 }
 
-void tmx::Tileset::parseFromFile(std::filesystem::path path, LoaderType loader) {
+void tmx::Tileset::parseFromFile(const std::filesystem::path& path, const LoaderType& loader) {
     tinyxml2::XMLDocument doc;
-    tinyxml2::XMLError error;
+    auto error = static_cast<tinyxml2::XMLError>(0);
     if(loader == nullptr) {
         error = doc.LoadFile(path.string().c_str());
     } else {
@@ -100,7 +100,7 @@ void tmx::Tileset::parse(tinyxml2::XMLElement* root) {
     root->QueryIntAttribute("tilecount", &d->tileCount);
     root->QueryIntAttribute("columns", &d->columns);
 
-    if(root->Attribute("objectalignment")) {
+    if(root->Attribute("objectalignment") != nullptr) {
         std::string value = root->Attribute("objectalignment");
         if(value == "unspecified") {
             d->objectAlignment = ObjectAlignment::UNSPECIFIED;
@@ -127,7 +127,7 @@ void tmx::Tileset::parse(tinyxml2::XMLElement* root) {
         }
     }
 
-    if(root->Attribute("tilerendersize")) {
+    if(root->Attribute("tilerendersize") != nullptr) {
         std::string value = root->Attribute("tilerendersize");
         if(value == "tile") {
             d->tileRenderSize = TileRenderSize::TILE;
@@ -138,7 +138,7 @@ void tmx::Tileset::parse(tinyxml2::XMLElement* root) {
         }
     }
 
-    if(root->Attribute("fillmode")) {
+    if(root->Attribute("fillmode") != nullptr) {
         std::string value = root->Attribute("fillmode");
         if(value == "stretch") {
             d->fillMode = FillMode::STRETCH;

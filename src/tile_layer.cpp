@@ -132,7 +132,8 @@ void tmx::TileLayer::parseCSVData(const std::string& str) {
 
 void tmx::TileLayer::parseBase64Data(const std::string& str) {
 #ifdef TMXPP_BASE64
-    auto begin = str.begin(), end = str.end();
+    auto begin = str.begin();
+    auto end = str.end();
     while(*begin == ' ' || *begin == '\n' || *begin == '\t') {
         ++begin;
     }
@@ -164,7 +165,8 @@ void tmx::TileLayer::parseBase64Data(const std::string& str) {
 #endif
 }
 
-std::string tmx::TileLayer::decompressData(std::string& str, std::string compression) {
+// NOLINTBEGIN
+std::string tmx::TileLayer::decompressData(std::string& str, const std::string& compression) {
     if(compression == "zstd") {
 #ifdef TMXPP_ZSTD
         size_t decSize = ZSTD_getFrameContentSize(str.c_str(), str.size());
@@ -218,3 +220,4 @@ std::string tmx::TileLayer::decompressData(std::string& str, std::string compres
 
     throw Exception("Unsupported compression " + compression);
 }
+// NOLINTEND

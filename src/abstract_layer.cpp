@@ -1,9 +1,6 @@
 #include <tinyxml2.h>
-#include <iostream>
-#include <tmxpp.hpp>
-#include <sstream>
 #include <string>
-#include <vector>
+#include <tmxpp.hpp>
 
 struct tmx::internal::AbstractLayer::Data {
     int id = 0;
@@ -13,7 +10,7 @@ struct tmx::internal::AbstractLayer::Data {
     bool visible = true;
     Color tintColor;
     Point offset;
-    Point parallaxFactor{1, 1};
+    Point parallaxFactor{.x = 1, .y = 1};
 };
 
 __TMXPP_CLASS_HEADER_IMPL__(tmx::internal, AbstractLayer)

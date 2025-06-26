@@ -21,7 +21,7 @@ Checks: >
   google-*,
   hicpp-avoid-goto,
   -llvm-include-order,
-  llvm-namespace-comment,
+  -llvm-namespace-comment,
   -llvm-header-guard,
   -llvmlibc-callee-namespace,
   -llvmlibc-implementation-in-namespace,
@@ -36,10 +36,12 @@ Checks: >
   -readability-identifier-length,
   readability-implicit-bool-conversion,
   -readability-magic-numbers,
+  -readability-function-cognitive-complexity,
   -fuchsia-default-arguments-calls,
   -fuchsia-overloaded-operator,
   -fuchsia-default-arguments-declarations,
-  -misc-const-correctness
+  -misc-const-correctness,
+  -google-readability-todo
 HeaderFilterRegex: '.*'
 WarningsAsErrors: '*'
 CheckOptions:

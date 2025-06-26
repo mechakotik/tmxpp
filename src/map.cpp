@@ -1,6 +1,6 @@
 #include <tinyxml2.h>
-#include <tmxpp.hpp>
 #include <string>
+#include <tmxpp.hpp>
 #include <vector>
 
 struct tmx::Map::Data {
@@ -59,7 +59,7 @@ void tmx::Map::parseFromData(const std::string& data) {
     parse(doc.FirstChildElement("map"));
 }
 
-void tmx::Map::parseFromFile(std::filesystem::path path, LoaderType loader) {
+void tmx::Map::parseFromFile(const std::filesystem::path& path, const LoaderType& loader) {
     tinyxml2::XMLDocument doc;
     tinyxml2::XMLError error = tinyxml2::XML_SUCCESS;
     if(loader == nullptr) {

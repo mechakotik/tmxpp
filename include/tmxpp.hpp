@@ -184,7 +184,7 @@ public:
     __TMXPP_CLASS_HEADER_DEF__(Map)
 
     void parseFromData(const std::string& data);
-    void parseFromFile(std::filesystem::path path, LoaderType loader = nullptr);
+    void parseFromFile(const std::filesystem::path& path, const LoaderType& loader = nullptr);
 
     [[nodiscard]] std::string version() const;
     [[nodiscard]] std::string tiledVersion() const;
@@ -239,7 +239,7 @@ public:
     __TMXPP_CLASS_HEADER_DEF__(Tileset)
 
     void parseFromData(const std::string& data);
-    void parseFromFile(std::filesystem::path path, LoaderType loader = nullptr);
+    void parseFromFile(const std::filesystem::path& path, const LoaderType& loader = nullptr);
 
     [[nodiscard]] int firstGID() const;
     [[nodiscard]] std::string source() const;
@@ -365,7 +365,7 @@ private:
     void parse(tinyxml2::XMLElement* root);
     void parseData(tinyxml2::XMLElement* root);
     void parseCSVData(const std::string& str);
-    static std::string decompressData(std::string& str, std::string compression);
+    static std::string decompressData(std::string& str, const std::string& compression);
     void parseBase64Data(const std::string& str);
     void checkBounds(int x, int y) const;
 
@@ -397,7 +397,7 @@ class tmx::Object : public Properties {
     friend class ObjectGroup;
 
 public:
-    enum class Type { EMPTY, ELLIPSE, POINT, POLYGON, POLYLINE, TEXT };
+    enum class Type : uint8_t { EMPTY, ELLIPSE, POINT, POLYGON, POLYLINE, TEXT };
 
     __TMXPP_CLASS_HEADER_DEF__(Object)
 
