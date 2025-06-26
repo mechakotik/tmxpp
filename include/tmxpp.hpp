@@ -55,6 +55,7 @@ namespace tmx {
     class TileLayer;
     class ObjectGroup;
     class Object;
+    class Text;
     class Layer;
 
     namespace internal {
@@ -415,12 +416,42 @@ public:
     [[nodiscard]] Point point() const;
     [[nodiscard]] const Polygon& polygon() const;
     [[nodiscard]] const Polyline& polyline() const;
+    [[nodiscard]] const Text& text() const;
 
 private:
     void parse(tinyxml2::XMLElement* root);
     static std::vector<Point> parsePoints(const std::string& str);
     void ensureType(Type type) const;
     static std::string typeName(Type type);
+
+    struct Data;
+    internal::DPointer<Data> d;
+};
+
+class tmx::Text {
+    friend class Object;
+
+public:
+    __TMXPP_CLASS_HEADER_DEF__(Text)
+
+    enum class HAlign : uint8_t { LEFT, CENTER, RIGHT, JUSTIFY };
+    enum class VAlign : uint8_t { TOP, CENTER, BOTTOM };
+
+    [[nodiscard]] std::string text() const; // TODO: return const reference here?
+    [[nodiscard]] std::string fontFamily() const;
+    [[nodiscard]] int pixelSize() const;
+    [[nodiscard]] bool wrap() const;
+    [[nodiscard]] Color color() const;
+    [[nodiscard]] bool bold() const;
+    [[nodiscard]] bool italic() const;
+    [[nodiscard]] bool underline() const;
+    [[nodiscard]] bool strikeout() const;
+    [[nodiscard]] bool kerning() const;
+    [[nodiscard]] HAlign halign() const;
+    [[nodiscard]] VAlign valign() const;
+
+private:
+    void parse(tinyxml2::XMLElement* root);
 
     struct Data;
     internal::DPointer<Data> d;

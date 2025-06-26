@@ -1,7 +1,7 @@
 #include <tinyxml2.h>
-#include <tmxpp.hpp>
 #include <sstream>
 #include <string>
+#include <tmxpp.hpp>
 #include <variant>
 #include <vector>
 
@@ -16,20 +16,21 @@ struct tmx::Object::Data {
     bool visible = true;
 
     Type type = Type::EMPTY;
-    std::variant<Ellipse, Point, std::vector<Point>> shape;
+    std::variant<Ellipse, Point, std::vector<Point>, Text> shape;
 };
+
 __TMXPP_CLASS_HEADER_IMPL__(tmx, Object)
 
-int tmx::Object::id() const {return d->id;}
-std::string tmx::Object::name() const {return d->name;}
-std::string tmx::Object::className() const {return d->className;}
-tmx::Point tmx::Object::position() const {return d->position;}
-tmx::Point tmx::Object::size() const {return d->size;}
-double tmx::Object::rotation() const {return d->rotation;}
-int tmx::Object::gid() const {return d->gid;}
-bool tmx::Object::visible() const {return d->visible;}
+int tmx::Object::id() const { return d->id; }
+std::string tmx::Object::name() const { return d->name; }
+std::string tmx::Object::className() const { return d->className; }
+tmx::Point tmx::Object::position() const { return d->position; }
+tmx::Point tmx::Object::size() const { return d->size; }
+double tmx::Object::rotation() const { return d->rotation; }
+int tmx::Object::gid() const { return d->gid; }
+bool tmx::Object::visible() const { return d->visible; }
 
-tmx::Object::Type tmx::Object::type() const {return d->type;}
+tmx::Object::Type tmx::Object::type() const { return d->type; }
 
 tmx::Ellipse tmx::Object::ellipse() const {
     ensureType(Type::ELLIPSE);
@@ -49,6 +50,11 @@ const tmx::Polygon& tmx::Object::polygon() const {
 const tmx::Polyline& tmx::Object::polyline() const {
     ensureType(Type::POLYLINE);
     return std::get<Polyline>(d->shape);
+}
+
+const tmx::Text& tmx::Object::text() const {
+    ensureType(Type::TEXT);
+    return std::get<Text>(d->shape);
 }
 
 void tmx::Object::ensureType(Type type) const {
@@ -97,7 +103,6 @@ void tmx::Object::parse(tinyxml2::XMLElement* root) {
     root->QueryIntAttribute("gid", &d->gid);
     root->QueryBoolAttribute("visible", &d->visible);
     // TODO: object templates
-    // TODO: text objects
 
     if(root->FirstChildElement("ellipse") != nullptr) {
         tinyxml2::XMLElement* element = root->FirstChildElement("ellipse");
@@ -123,6 +128,11 @@ void tmx::Object::parse(tinyxml2::XMLElement* root) {
         tinyxml2::XMLElement* element = root->FirstChildElement("polyline");
         d->shape = parsePoints(element->Attribute("points"));
         d->type = Type::POLYLINE;
+    } else if(root->FirstChildElement("text") != nullptr) {
+        tinyxml2::XMLElement* element = root->FirstChildElement("text");
+        d->shape = tmx::Text();
+        std::get<Text>(d->shape).parse(element);
+        d->type = Type::TEXT;
     }
 
     Properties::parse(root->FirstChildElement("properties"));

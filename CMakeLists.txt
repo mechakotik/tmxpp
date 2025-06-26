@@ -24,6 +24,7 @@ add_library(tmxpp
         src/tile.cpp
         src/object_group.cpp
         src/object.cpp
+        src/text.cpp
 )
 
 target_include_directories(tmxpp PRIVATE
